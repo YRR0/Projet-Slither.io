@@ -1,0 +1,27 @@
+abstract class Player 
+	String name
+	int points
+	Snake snake
+	isIA
+		class NormalPlayer
+		class AI
+
+class Snake
+	Color color
+	int length
+	boolean isAlive	
+		
+class Food
+	Color color
+	boolean isEaten
+
+class MapModel
+	int size
+	int height
+	int length
+	
+MapView
+	
+	
+
+
