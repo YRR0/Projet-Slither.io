@@ -1,4 +1,6 @@
 package fr.uparis.informatique.cpoo5.projet;
+
+/*package fr.uparis.informatique.cpoo5.projet;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -13,11 +15,10 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class SnakeGame extends Application {
 
-    private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
-    private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
+    private static final int WIDTH = (int)Screen.getPrimary().getBounds().getWidth();
+    private static final int HEIGHT = (int)Screen.getPrimary().getBounds().getHeight();
 
     public static void main(String[] args) {
         launch(args);
@@ -49,29 +50,32 @@ public class SnakeGame extends Application {
 class Game {
     private Food food;
     private static final double SPEED = 1.0;
-    private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
-    private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
+    private static final int WIDTH = (int)Screen.getPrimary().getBounds().getWidth();
+    private static final int HEIGHT = (int)Screen.getPrimary().getBounds().getHeight();
     private List<SnakeSegment> snake = new ArrayList<>();
     private double directionX = 1;
     private double directionY = 0;
 
     public Game() {
         snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
-        generateFood();
     }
 
     public void update() {
         SnakeSegment head = snake.get(0);
         double newX = head.getX() + directionX * SPEED;
         double newY = head.getY() + directionY * SPEED;
+        snake.add(0, new SnakeSegment(newX, newY));
+
+        // Keep the snake size reasonable
+        if (snake.size() > 20) {
+            snake.remove(snake.size() - 1);
+        }
 
         // Vérifier la collision avec la nourriture
         if (food != null && head.getX() == food.getX() && head.getY() == food.getY()) {
             snake.add(0, new SnakeSegment(newX, newY));
             generateFood();
         } else {
-            // Supprimer le dernier segment du serpent s'il n'a pas mangé de nourriture
-            snake.remove(snake.size() - 1);
             snake.add(0, new SnakeSegment(newX, newY));
         }
     }
@@ -84,7 +88,6 @@ class Game {
         this.directionX = directionX;
         this.directionY = directionY;
     }
-
     private void generateFood() {
         double x = Math.random() * WIDTH;
         double y = Math.random() * HEIGHT;
@@ -94,11 +97,12 @@ class Game {
     public Food getFood() {
         return food;
     }
+
 }
 
 class GamePane extends StackPane {
-    private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
-    private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
+    private static final int WIDTH = (int)Screen.getPrimary().getBounds().getWidth();
+    private static final int HEIGHT = (int)Screen.getPrimary().getBounds().getHeight();
     private Game game;
     private Canvas canvas;
 
@@ -124,7 +128,7 @@ class GamePane extends StackPane {
         // Dessiner la nourriture
         if (game.getFood() != null) {
             gc.setFill(Color.RED);
-            gc.fillOval(game.getFood().getX(), game.getFood().getY(), Food.SIZE, Food.SIZE);
+            gc.fillOval(game.getFood().getX(), game.getFood().getY(), 20, 20);
         }
 
         // Dessiner le serpent
@@ -156,8 +160,6 @@ class SnakeSegment {
 }
 
 class Food {
-    public static final double SIZE = 20;
-
     private double x;
     private double y;
 
@@ -174,3 +176,4 @@ class Food {
         return y;
     }
 }
+*/
