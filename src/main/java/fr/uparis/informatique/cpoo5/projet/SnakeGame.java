@@ -9,6 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,8 @@ public class SnakeGame extends Application {
 
         scene.setOnMouseMoved(gamePane::handleMouseMove);
 
-        primaryStage.setTitle("Slither.io");
+        //primaryStage.setTitle("Slither.io");
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -72,6 +74,7 @@ class Game {
         SnakeSegment head = snake.get(0);
         double newX = head.getX() + directionX * SPEED;
         double newY = head.getY() + directionY * SPEED;
+        if(!isOffLimits(newX, newY)){
         //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList); 
         for (Food food : foodCopy) {
@@ -81,10 +84,11 @@ class Game {
                 foodList.remove(food); //On retire de la liste originale
                 generateFood(); //On génère une nouvelle Food
             }
-        }
+        }       
         // Supprimer le dernier segment du serpent s'il n'a pas mangé de nourriture
         snake.remove(snake.size() - 1);
         snake.add(0, new SnakeSegment(newX, newY));
+         }
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
@@ -95,6 +99,10 @@ class Game {
                 head.getY() + SnakeSegment.SIZE > f.getY();
     }
 
+    private boolean isOffLimits(double x, double y) {
+        return x > WIDTH - SnakeSegment.SIZE || x < 0 + SnakeSegment.SIZE || y > HEIGHT - SnakeSegment.SIZE || y < 0 + SnakeSegment.SIZE;
+    }
+    
     public List<SnakeSegment> getSnake() {
         return snake;
     }
@@ -175,6 +183,14 @@ class SnakeSegment {
 
     public double getY() {
         return y;
+    }
+
+    public void setX(double x){
+        this.x = x;
+    }
+
+    public void setY(double y){
+        this.y = y;
     }
 }
 
