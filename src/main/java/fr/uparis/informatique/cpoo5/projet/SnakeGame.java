@@ -66,7 +66,7 @@ class Game {
         double newY = head.getY() + directionY * SPEED;
 
         // Vérifier la collision avec la nourriture
-        if (food != null && head.getX() == food.getX() && head.getY() == food.getY()) {
+        if (food != null && isCollidingWithFood(head)) {
             snake.add(0, new SnakeSegment(newX, newY));
             generateFood();
         } else {
@@ -74,6 +74,14 @@ class Game {
             snake.remove(snake.size() - 1);
             snake.add(0, new SnakeSegment(newX, newY));
         }
+    }
+
+    private boolean isCollidingWithFood(SnakeSegment head) {
+        // Vérifier la collision avec la zone de la nourriture
+        return head.getX() < food.getX() + Food.SIZE &&
+                head.getX() + SnakeSegment.SIZE > food.getX() &&
+                head.getY() < food.getY() + Food.SIZE &&
+                head.getY() + SnakeSegment.SIZE > food.getY();
     }
 
     public List<SnakeSegment> getSnake() {
@@ -136,7 +144,7 @@ class GamePane extends StackPane {
 }
 
 class SnakeSegment {
-    public static final double SIZE = 20;
+    public static final double SIZE = 25;
 
     private double x;
     private double y;
