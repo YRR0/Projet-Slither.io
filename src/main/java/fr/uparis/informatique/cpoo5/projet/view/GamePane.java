@@ -39,14 +39,4 @@ public class GamePane extends StackPane {
             gc.fillOval(segment.getX(), segment.getY(), SnakeSegment.SIZE, SnakeSegment.SIZE);
         }
     }
-
-
-    public void handleMouseMove(MouseEvent event) {
-        double mouseX = event.getX();
-        double mouseY = event.getY();
-
-        SnakeSegment head = game.getSnake().get(0);
-        double angle = Math.atan2(mouseY - head.getY(), mouseX - head.getX());
-        game.setDirection(Math.cos(angle), Math.sin(angle));
-    }
 }

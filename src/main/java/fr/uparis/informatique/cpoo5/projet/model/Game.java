@@ -6,7 +6,7 @@ import javafx.stage.Screen;
 public class Game {
     private Food food;
     private List<Food> foodList = new ArrayList<>(); //Pour stocker tous les aliments de la map
-    private static final double SPEED = 1.0;
+    private static final double SPEED = 0.5;
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private List<SnakeSegment> snake = new ArrayList<>();
@@ -21,7 +21,7 @@ public class Game {
 
     //Pour générer plusieurs aliments et les stocker
     private void generateAllFood() {
-        for (int i = 0; i < 20; i++) { 
+        for (int i = 0; i < 100; i++) {
             generateFood();
         }
     }
