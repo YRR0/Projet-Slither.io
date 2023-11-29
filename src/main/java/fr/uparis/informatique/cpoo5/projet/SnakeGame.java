@@ -55,11 +55,13 @@ class Game {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private List<SnakeSegment> snake = new ArrayList<>();
+
     private double directionX = 1;
     private double directionY = 0;
 
     public Game() {
         snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
+        snakeBot.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
         generateAllFood();
     }
 
@@ -75,27 +77,33 @@ class Game {
         double newX = head.getX() + directionX * SPEED;
         double newY = head.getY() + directionY * SPEED;
         if(!isOffLimits(newX, newY)){
+            grow(newX, newY, head);
+        }
+    }
+
+    private void grow(double newX, double newY, SnakeSegment head){
         //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList); 
         for (Food food : foodCopy) {
             // Vérifier la collision avec la nourriture
             if (isCollidingWithFood(food, head)) {
-                snake.add(0, new SnakeSegment(newX, newY));
+                for(int i = 0; i<food.getSize()/2; ++i){ //Taille augmente en fonction de la taille de la nourriture
+                    snake.add(i, new SnakeSegment(newX, newY));
+                }
                 foodList.remove(food); //On retire de la liste originale
                 generateFood(); //On génère une nouvelle Food
             }
         }       
-        // Supprimer le dernier segment du serpent s'il n'a pas mangé de nourriture
+        //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
         snake.remove(snake.size() - 1);
         snake.add(0, new SnakeSegment(newX, newY));
-         }
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
         // Vérifier la collision avec la zone de la nourriture
-        return head.getX() < f.getX() + Food.SIZE &&
+        return head.getX() < f.getX() + f.getSize() &&
                 head.getX() + SnakeSegment.SIZE > f.getX() &&
-                head.getY() < f.getY() + Food.SIZE &&
+                head.getY() < f.getY() + f.getSize() &&
                 head.getY() + SnakeSegment.SIZE > f.getY();
     }
 
@@ -155,7 +163,7 @@ class GamePane extends StackPane {
         //On affiche tous les éléments de la liste
         for (Food food : game.getFoodList()) {
             gc.setFill(Color.RED);
-            gc.fillOval(food.getX(), food.getY(), Food.SIZE, Food.SIZE);
+            gc.fillOval(food.getX(), food.getY(), food.getSize(), food.getSize());
         }
 
         // Dessiner le serpent
@@ -195,12 +203,15 @@ class SnakeSegment {
 }
 
 class Food {
-    public static final double SIZE = 20;
-
+    private double size;
     private double x;
     private double y;
 
     public Food(double x, double y) {
+        int max = 20;
+        int min = 10;
+        int range = max - min + 1;
+        this.size = (int)(Math.random() * range) + min; //Taille de nourriture aléatoire
         this.x = x;
         this.y = y;
     }
@@ -211,5 +222,9 @@ class Food {
 
     public double getY() {
         return y;
+    }
+
+    public double getSize(){
+        return this.size;
     }
 }
