@@ -61,7 +61,6 @@ class Game {
 
     public Game() {
         snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
-        snakeBot.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
         generateAllFood();
     }
 
