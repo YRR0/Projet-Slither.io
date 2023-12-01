@@ -1,13 +1,14 @@
 package fr.uparis.informatique.cpoo5.projet.view;
-
 import fr.uparis.informatique.cpoo5.projet.model.Food;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
+import fr.uparis.informatique.cpoo5.projet.model.SnakeSegmentIA;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import java.util.List;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 
 // La classe qui représente le panneau de jeu
@@ -37,6 +38,14 @@ public class GamePane extends StackPane {
         for (SnakeSegment segment : game.getSnake()) {
             gc.setFill(Color.GREEN);
             gc.fillOval(segment.getX(), segment.getY(), SnakeSegment.SIZE, SnakeSegment.SIZE);
+        }
+
+        // Dessiner les IA
+        for (List<SnakeSegmentIA> ia : game.getIA()){
+            for (SnakeSegmentIA segment : ia) {
+                gc.setFill(Color.BLUE);
+                gc.fillOval(segment.getX(), segment.getY(), segment.getSize(), segment.getSize());
+            }
         }
     }
 }
