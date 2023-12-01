@@ -21,4 +21,8 @@ public class SnakeController {
     public void handleMouseMove(double mouseX, double mouseY) {
         game.handleMouseMove(mouseX, mouseY);
     }
+
+    public Game getGame(){
+        return this.game;
+    }
 }

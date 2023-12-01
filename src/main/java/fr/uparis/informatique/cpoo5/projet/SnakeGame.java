@@ -1,6 +1,7 @@
 package fr.uparis.informatique.cpoo5.projet;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeController;
+import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ public class SnakeGame extends Application {
         Game game = new Game();
         GamePane gamePane = new GamePane(game);
         SnakeController gameController = new SnakeController(game, gamePane);
+        SnakeIAController iaGameController = new SnakeIAController(game, gamePane);
 
 
         // Créer une scène avec le panneau de jeu
