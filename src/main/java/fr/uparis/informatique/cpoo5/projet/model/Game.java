@@ -23,14 +23,14 @@ public class Game {
 
     //Pour générer plusieurs aliments et les stocker
     private void generateAllFood() {
-        for (int i = 0; i < 20; i++) { 
+        for (int i = 0; i < 60; i++) { 
             generateFood();
         }
     }
 
     private void generateIA(){
         //On génère un nombre aléatoire d'IA pour la partie
-        int nbrIA = randomGenerator(1, 10); 
+        int nbrIA = randomGenerator(1, 3); 
         int randPosX;
         int randPosY;
         List<SnakeSegmentIA> ia;
@@ -54,6 +54,9 @@ public class Game {
         double newY = head.getY() + directionY * SPEED;
         if(!isOffLimits(newX, newY)){
             grow(newX, newY, snake);
+            //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
+            snake.remove(snake.size() - 1);
+            snake.add(0, new SnakeSegment(newX, newY));
         }
         moveIaKillStrat();
     }
@@ -74,9 +77,35 @@ public class Game {
                 generateFood(); 
             }
         }       
-        //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
-        snake.remove(snake.size() - 1);
-        snake.add(0, new SnakeSegment(newX, newY));
+    }
+
+    private void growIA(double newX, double newY, List<SnakeSegmentIA> snakeIA){
+        int formerSize = snakeIA.get(0).getSize();
+        //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
+        List<Food> foodCopy = new ArrayList<>(foodList); 
+        for (Food food : foodCopy) {
+            // Vérifier la collision avec la nourriture
+            if (isCollidingWithFood(food, snakeIA.get(0))) {
+                //Taille augmente en fonction de la taille de la nourriture
+                for(int i = 0; i<food.getSize(); ++i){
+                    SnakeSegmentIA newSeg = new SnakeSegmentIA(newX, newY);
+                    newSeg = new SnakeSegmentIA(newX, newY);
+                    newSeg.setSize(formerSize);
+                    snakeIA.add(i, newSeg);
+
+                }
+                //On retire de la liste originale
+                foodList.remove(food); 
+                //On génère une nouvelle Food
+                generateFood(); 
+            }
+            
+        }  
+        //On met à jour les segments des IA
+        snakeIA.remove(snakeIA.size() - 1);
+        SnakeSegmentIA newSeg1 = new SnakeSegmentIA(newX, newY);
+        newSeg1.setSize(formerSize);
+        snakeIA.add(0, newSeg1);     
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
@@ -167,8 +196,11 @@ public class Game {
             double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (SPEED/2);
             double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (SPEED/2);
             //On met à jour les positions
-            ia.get(0).setX(newX);
-            ia.get(0).setY(newY);    
+            if(!isOffLimits(newX, newY)){
+                growIA(newX, newY, ia);
+                ia.get(0).setX(newX);
+                ia.get(0).setY(newY);
+            }              
         }
     }
 }
