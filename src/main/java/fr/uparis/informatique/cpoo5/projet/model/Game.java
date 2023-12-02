@@ -53,17 +53,17 @@ public class Game {
         double newX = head.getX() + directionX * SPEED;
         double newY = head.getY() + directionY * SPEED;
         if(!isOffLimits(newX, newY)){
-            grow(newX, newY, head);
+            grow(newX, newY, snake);
         }
-        moveIA();
+        moveIaKillStrat();
     }
 
-    private void grow(double newX, double newY, SnakeSegment head){
+    private void grow(double newX, double newY, List<SnakeSegment> snake){
         //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList); 
         for (Food food : foodCopy) {
             // Vérifier la collision avec la nourriture
-            if (isCollidingWithFood(food, head)) {
+            if (isCollidingWithFood(food, snake.get(0))) {
                 //Taille augmente en fonction de la taille de la nourriture
                 for(int i = 0; i<food.getSize()/2; ++i){
                     snake.add(i, new SnakeSegment(newX, newY));
@@ -119,13 +119,13 @@ public class Game {
         return foodList;
     }
     
-    public void handleMouseMove(double mouseX, double mouseY) {
+    /*public void handleMouseMove(double mouseX, double mouseY) {
         SnakeSegment head = snake.get(0);
         double angle = Math.atan2(mouseY - head.getY(), mouseX - head.getX());
         setDirection(Math.cos(angle), Math.sin(angle));
-    }
+    }*/
 
-    public void moveIA(){
+    public void moveIaAléatoire(){
         for (List<SnakeSegmentIA> ia : this.snakeIA) {
             double newX, newY;
             //Chaque IA à un compte à rebours aléatoire pour changer de direction
@@ -151,5 +151,24 @@ public class Game {
             //On décrémente le compte à rebours
             ia.get(0).decreaseCountdown();
         }
-    }    
+    }
+    
+    public void moveIaKillStrat() {
+        for (List<SnakeSegmentIA> ia : this.snakeIA) {
+            SnakeSegment head = snake.get(0);
+            //On calcule la différence entre les coordonnées du snake et des IA 
+            double directionToPlayerX = head.getX() - ia.get(0).getX();
+            double directionToPlayerY = head.getY() - ia.get(0).getY();
+            //On calcule l'angle des IA par rapport au snake
+            double angleToPlayer = Math.atan2(directionToPlayerY, directionToPlayerX);
+            //On met à jour la direction
+            ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
+            //On calcule les nouvelles coordonnées pour la tête des IA 
+            double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (SPEED/2);
+            double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (SPEED/2);
+            //On met à jour les positions
+            ia.get(0).setX(newX);
+            ia.get(0).setY(newY);    
+        }
+    }
 }

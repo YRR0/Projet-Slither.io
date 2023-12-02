@@ -58,4 +58,6 @@ public class GamePane extends StackPane {
         double angle = Math.atan2(mouseY - head.getY(), mouseX - head.getX());
         game.setDirection(Math.cos(angle), Math.sin(angle));
     }
+
+    
 }
