@@ -4,7 +4,6 @@ import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegmentIA;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
