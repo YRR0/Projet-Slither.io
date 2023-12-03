@@ -5,8 +5,6 @@ import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 
-import java.awt.event.MouseEvent;
-
 public class SnakeController {
     private Game game;
     private GamePane gamePane;
