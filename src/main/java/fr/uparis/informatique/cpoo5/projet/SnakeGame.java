@@ -1,5 +1,6 @@
 package fr.uparis.informatique.cpoo5.projet;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
+import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeController;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import javafx.animation.AnimationTimer;
@@ -8,8 +9,8 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.input.MouseEvent;
 
-import fr.uparis.informatique.cpoo5.projet.model.Game;
 
 // La classe principale de l'application, étendant la classe Application de JavaFX
 public class SnakeGame extends Application {
@@ -37,7 +38,7 @@ public class SnakeGame extends Application {
         Scene scene = new Scene(gamePane, WIDTH, HEIGHT);
 
         // Gérer les mouvements de la souris pour changer la direction du serpent
-        scene.setOnMouseMoved(gamePane::handleMouseMove);
+        scene.setOnMouseMoved(gameController::handleMouseMove);
 
         // Configurer la fenêtre principale
         primaryStage.initStyle(StageStyle.UNDECORATED); // Masquer les décorations de la fenêtre
