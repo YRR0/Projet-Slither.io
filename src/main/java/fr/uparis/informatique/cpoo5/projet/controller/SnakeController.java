@@ -29,9 +29,10 @@ public class SnakeController {
         SnakeSegment head = game.getSnake().get(0);
         double angle = Math.atan2(mouseY - head.getY(), mouseX - head.getX());
         game.setDirection(Math.cos(angle), Math.sin(angle));
-
-        game.handleMouseMove(mouseX, mouseY);
     }
+    /*public void handleMouseMove(double mouseX, double mouseY) {
+        game.handleMouseMove(mouseX, mouseY);
+    }*/
 
     public Game getGame(){
         return this.game;

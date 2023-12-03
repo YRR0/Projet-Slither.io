@@ -9,7 +9,7 @@ public class SnakeIAController extends SnakeController {
     }
 
     public void move(){
-        getGame().moveIA();
+        //getGame().moveIaAléatoire();
     }
     
 }
