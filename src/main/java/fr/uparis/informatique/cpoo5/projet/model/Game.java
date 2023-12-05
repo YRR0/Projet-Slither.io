@@ -103,9 +103,7 @@ public class Game {
             if (isCollidingWithFood(food, snakeIA.get(0))) {
                 //Taille augmente en fonction de la taille de la nourriture
                 for(int i = 0; i<food.getSize(); ++i){
-                    SnakeSegmentIA newSeg = new SnakeSegmentIA(newX, newY);
-                    newSeg = new SnakeSegmentIA(newX, newY);
-                    snakeIA.add(i, newSeg);
+                    snakeIA.add(i, new SnakeSegmentIA(newX, newY));
                 }
                 //On retire de la liste originale
                 foodList.remove(food);
@@ -115,8 +113,7 @@ public class Game {
         }
         //On met à jour les segments des IA
         snakeIA.remove(snakeIA.size() - 1);
-        SnakeSegmentIA newSeg1 = new SnakeSegmentIA(newX, newY);
-        snakeIA.add(0, newSeg1);     
+        snakeIA.add(0, new SnakeSegmentIA(newX, newY));     
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
@@ -191,7 +188,7 @@ public class Game {
         //On calcule la nouvelle position
         double newX = head.getX() + ia.get(0).getDirectionX() * SPEED;
         double newY = head.getY() + ia.get(0).getDirectionY() * SPEED;
-        //On met à jour dans le cas où ce n'est pas hors limites        
+        //On met à jour        
         ia.get(0).setX(newX);
         ia.get(0).setY(newY);
     }
@@ -253,6 +250,7 @@ public class Game {
     public double getWidth() {
         return WIDTH;
     }
+    
     public double getHeight() {
         return HEIGHT;
     }
@@ -260,18 +258,20 @@ public class Game {
     public void increaseSpeed() {
        speed = true;
     }
+    
     public void decreaseSpeed() {
         speed = false;
     }
 
-    public boolean isPaused(){return this.paused;}
+    public boolean isPaused(){
+        return this.paused;
+    }
 
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
+
     public void togglePause() {
         setPaused(!isPaused());
     }
-
-
 }
