@@ -1,16 +1,26 @@
 package fr.uparis.informatique.cpoo5.projet.model;
+import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 public class Game {
+
+    private boolean paused = false;
     private Food food;
     private List<Food> foodList = new ArrayList<>(); //Pour stocker tous les aliments de la map
     private static final double SPEED = 0.5;
+
+    private static final double INC_SPEED = 2.0;
+    private boolean speed;
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private List<SnakeSegment> snake = new ArrayList<>();
     private List<List<SnakeSegmentIA>> snakeIA = new ArrayList<>();
+
+
 
     private double directionX = 1;
     private double directionY = 0;
@@ -23,7 +33,7 @@ public class Game {
 
     //Pour générer plusieurs aliments et les stocker
     private void generateAllFood() {
-        for (int i = 0; i < 60; i++) { 
+        for (int i = 0; i < 100; i++) {
             generateFood();
         }
     }
@@ -52,26 +62,31 @@ public class Game {
         SnakeSegment head = snake.get(0);
         double newX = head.getX() + directionX * SPEED;
         double newY = head.getY() + directionY * SPEED;
-        if(!isOffLimits(newX, newY)){
-            grow(newX, newY, snake);
-        }
+        grow(newX, newY, snake);
         updateIA();
     }
 
     private void grow(double newX, double newY, List<SnakeSegment> snake){
-        //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
-        List<Food> foodCopy = new ArrayList<>(foodList); 
+        // On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
+        List<Food> foodCopy = new ArrayList<>(foodList);
         for (Food food : foodCopy) {
             // Vérifier la collision avec la nourriture
             if (isCollidingWithFood(food, snake.get(0))) {
-                //Taille augmente en fonction de la taille de la nourriture
-                for(int i = 0; i<food.getSize()/2; ++i){
-                    snake.add(i, new SnakeSegment(newX, newY));
+                // Taille augmente en fonction de la taille de la nourriture
+                for (int i = 0; i < food.getSize() / 2; ++i) {
+                    /*if (i == 0) {
+                        // Utiliser la couleur spécifiée pour la tête
+                        snake.add(i, new SnakeSegment(newX, newY, Color.BLACK));
+                    } else {
+                        // Utiliser la couleur verte par défaut pour le reste du corps
+                        snake.add(i, new SnakeSegment(newX, newY,Color.GREEN));
+                    }*/
+                    snake.add(i,new SnakeSegment(newX, newY,food.getColor()));
                 }
-                //On retire de la liste originale
-                foodList.remove(food); 
-                //On génère une nouvelle Food
-                generateFood(); 
+                // On retire de la liste originale
+                foodList.remove(food);
+                // On génère une nouvelle Food
+                generateFood();
             }
         }     
         //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
@@ -79,9 +94,10 @@ public class Game {
         snake.add(0, new SnakeSegment(newX, newY));  
     }
 
+
     private void growIA(double newX, double newY, List<SnakeSegmentIA> snakeIA){
         //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
-        List<Food> foodCopy = new ArrayList<>(foodList); 
+        List<Food> foodCopy = new ArrayList<>(foodList);
         for (Food food : foodCopy) {
             // Vérifier la collision avec la nourriture
             if (isCollidingWithFood(food, snakeIA.get(0))) {
@@ -90,15 +106,13 @@ public class Game {
                     SnakeSegmentIA newSeg = new SnakeSegmentIA(newX, newY);
                     newSeg = new SnakeSegmentIA(newX, newY);
                     snakeIA.add(i, newSeg);
-
                 }
                 //On retire de la liste originale
-                foodList.remove(food); 
+                foodList.remove(food);
                 //On génère une nouvelle Food
-                generateFood(); 
+                generateFood();
             }
-            
-        }  
+        }
         //On met à jour les segments des IA
         snakeIA.remove(snakeIA.size() - 1);
         SnakeSegmentIA newSeg1 = new SnakeSegmentIA(newX, newY);
@@ -113,10 +127,6 @@ public class Game {
                 head.getY() + SnakeSegment.SIZE > f.getY();
     }
 
-    private boolean isOffLimits(double x, double y) {
-        return x > WIDTH - SnakeSegment.SIZE || x < 0 + SnakeSegment.SIZE || y > HEIGHT - SnakeSegment.SIZE || y < 0 + SnakeSegment.SIZE;
-    }
-    
     public List<SnakeSegment> getSnake() {
         return snake;
     }
@@ -131,12 +141,13 @@ public class Game {
     }
 
     private void generateFood() {
-        double x = Math.random() * WIDTH;
+        double x = Math.random() * WIDTH ;
         double y = Math.random() * HEIGHT;
+
         //On ajoute à chaque fois dans la liste
-        if(!isOffLimits(x, y)){
-            foodList.add(new Food(x, y));
-        }
+        RandomColorFactory f = new RandomColorFactory();
+        f.generateColor();
+        foodList.add(new Food(x, y,f.generateColor()));
     }
 
     public Food getFood() {
@@ -181,10 +192,8 @@ public class Game {
         double newX = head.getX() + ia.get(0).getDirectionX() * SPEED;
         double newY = head.getY() + ia.get(0).getDirectionY() * SPEED;
         //On met à jour dans le cas où ce n'est pas hors limites        
-        if (!isOffLimits(newX, newY)) {
-            ia.get(0).setX(newX);
-            ia.get(0).setY(newY);
-        }
+        ia.get(0).setX(newX);
+        ia.get(0).setY(newY);
     }
     
     private void moveIaKillStrat(List<SnakeSegmentIA> ia) {
@@ -200,10 +209,8 @@ public class Game {
         double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.40);
         double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.40);
         //On met à jour les positions
-        if(!isOffLimits(newX, newY)){
-            ia.get(0).setX(newX);
-            ia.get(0).setY(newY);
-        }              
+        ia.get(0).setX(newX);
+        ia.get(0).setY(newY);
     }
 
     public boolean PlayerIsTooBig(){
@@ -242,4 +249,29 @@ public class Game {
             growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
         }
     }
+
+    public double getWidth() {
+        return WIDTH;
+    }
+    public double getHeight() {
+        return HEIGHT;
+    }
+
+    public void increaseSpeed() {
+       speed = true;
+    }
+    public void decreaseSpeed() {
+        speed = false;
+    }
+
+    public boolean isPaused(){return this.paused;}
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+    public void togglePause() {
+        setPaused(!isPaused());
+    }
+
+
 }

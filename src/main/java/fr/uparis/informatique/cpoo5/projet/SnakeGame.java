@@ -39,6 +39,8 @@ public class SnakeGame extends Application {
 
         // Gérer les mouvements de la souris pour changer la direction du serpent
         scene.setOnMouseMoved(gameController::handleMouseMove);
+        scene.setOnKeyPressed(gameController::handleKeyPress);
+        scene.setOnKeyReleased(gameController::handleKeyRelease);
 
         // Configurer la fenêtre principale
         primaryStage.initStyle(StageStyle.UNDECORATED); // Masquer les décorations de la fenêtre
@@ -49,9 +51,10 @@ public class SnakeGame extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                // Mettre à jour l'état du jeu et rendre le panneau de jeu
-                game.update();
-                gamePane.render();
+                if (!game.isPaused()) {
+                    // Mettre à jour l'état du jeu et rendre le panneau de jeu
+                    gameController.update();
+                }
             }
         }.start();
     }
