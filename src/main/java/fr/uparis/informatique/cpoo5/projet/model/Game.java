@@ -52,12 +52,12 @@ public class Game {
         SnakeSegment head = snake.get(0);
         double newX = head.getX() + directionX * SPEED;
         double newY = head.getY() + directionY * SPEED;
-        if(!isOffLimits(newX, newY)){
+       // if(!isOffLimits(newX, newY)){
             grow(newX, newY, snake);
             //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
             snake.remove(snake.size() - 1);
             snake.add(0, new SnakeSegment(newX, newY));
-        }
+        //}
         moveIaKillStrat();
     }
 
@@ -196,11 +196,11 @@ public class Game {
             double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (SPEED/2);
             double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (SPEED/2);
             //On met à jour les positions
-            if(!isOffLimits(newX, newY)){
+            //if(!isOffLimits(newX, newY)){
                 growIA(newX, newY, ia);
                 ia.get(0).setX(newX);
                 ia.get(0).setY(newY);
-            }              
+            //}
         }
     }
 }

@@ -28,23 +28,31 @@ public class GamePane extends StackPane {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, WIDTH, HEIGHT);
 
-        //On affiche tous les éléments de la liste
+
+        // Trouver la tête du serpent
+        SnakeSegment head = game.getSnake().get(0);
+        // Calculer la différence pour centrer la vue
+        double offsetX = WIDTH / 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
+
+        // Afficher tous les éléments décalés par la différence calculée
         for (Food food : game.getFoodList()) {
             gc.setFill(Color.RED);
-            gc.fillOval(food.getX(), food.getY(), food.getSize(), food.getSize());
+            gc.fillOval(food.getX() + offsetX, food.getY() + offsetY, food.getSize(), food.getSize());
         }
+
 
         // Dessiner le serpent
         for (SnakeSegment segment : game.getSnake()) {
             gc.setFill(Color.GREEN);
-            gc.fillOval(segment.getX(), segment.getY(), SnakeSegment.SIZE, SnakeSegment.SIZE);
+            gc.fillOval(segment.getX() + offsetX, segment.getY() + offsetY, SnakeSegment.SIZE, SnakeSegment.SIZE);
         }
 
         // Dessiner les IA
-        for (List<SnakeSegmentIA> ia : game.getIA()){
+        for (List<SnakeSegmentIA> ia : game.getIA()) {
             for (SnakeSegmentIA segment : ia) {
                 gc.setFill(Color.BLUE);
-                gc.fillOval(segment.getX(), segment.getY(), segment.getSize(), segment.getSize());
+                gc.fillOval(segment.getX() + offsetX, segment.getY() + offsetY, segment.getSize(), segment.getSize());
             }
         }
     }
