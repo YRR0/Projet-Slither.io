@@ -203,8 +203,8 @@ public class Game {
         //On met à jour la direction
         ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
         //On calcule les nouvelles coordonnées pour la tête des IA 
-        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.40);
-        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.40);
+        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.35);
+        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.35);
         //On met à jour les positions
         ia.get(0).setX(newX);
         ia.get(0).setY(newY);
@@ -250,7 +250,7 @@ public class Game {
     public double getWidth() {
         return WIDTH;
     }
-    
+
     public double getHeight() {
         return HEIGHT;
     }
