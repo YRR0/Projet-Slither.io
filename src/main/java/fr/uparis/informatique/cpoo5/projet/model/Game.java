@@ -30,7 +30,7 @@ public class Game {
 
     private void generateIA(){
         //On génère un nombre aléatoire d'IA pour la partie
-        int nbrIA = randomGenerator(1, 3); 
+        int nbrIA = randomGenerator(1, 1); 
         int randPosX;
         int randPosY;
         List<SnakeSegmentIA> ia;
@@ -43,7 +43,7 @@ public class Game {
         }
     }
 
-    public int randomGenerator(int min, int max){
+    private int randomGenerator(int min, int max){
         int range = max - min + 1;
         return (int)(Math.random() * range) + min;
     }
@@ -54,11 +54,8 @@ public class Game {
         double newY = head.getY() + directionY * SPEED;
         if(!isOffLimits(newX, newY)){
             grow(newX, newY, snake);
-            //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
-            snake.remove(snake.size() - 1);
-            snake.add(0, new SnakeSegment(newX, newY));
         }
-        moveIaKillStrat();
+        updateIA();
     }
 
     private void grow(double newX, double newY, List<SnakeSegment> snake){
@@ -76,11 +73,13 @@ public class Game {
                 //On génère une nouvelle Food
                 generateFood(); 
             }
-        }       
+        }     
+        //On supprime le dernier segment du serpent s'il n'a pas mangé de nourriture
+        snake.remove(snake.size() - 1);
+        snake.add(0, new SnakeSegment(newX, newY));  
     }
 
     private void growIA(double newX, double newY, List<SnakeSegmentIA> snakeIA){
-        int formerSize = snakeIA.get(0).getSize();
         //On utilise une liste qui copie pour éviter les exceptions ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList); 
         for (Food food : foodCopy) {
@@ -90,7 +89,6 @@ public class Game {
                 for(int i = 0; i<food.getSize(); ++i){
                     SnakeSegmentIA newSeg = new SnakeSegmentIA(newX, newY);
                     newSeg = new SnakeSegmentIA(newX, newY);
-                    newSeg.setSize(formerSize);
                     snakeIA.add(i, newSeg);
 
                 }
@@ -104,7 +102,6 @@ public class Game {
         //On met à jour les segments des IA
         snakeIA.remove(snakeIA.size() - 1);
         SnakeSegmentIA newSeg1 = new SnakeSegmentIA(newX, newY);
-        newSeg1.setSize(formerSize);
         snakeIA.add(0, newSeg1);     
     }
 
@@ -147,16 +144,12 @@ public class Game {
     public List<Food> getFoodList() {
         return foodList;
     }
-    
-    /*public void handleMouseMove(double mouseX, double mouseY) {
-        SnakeSegment head = snake.get(0);
-        double angle = Math.atan2(mouseY - head.getY(), mouseX - head.getX());
-        setDirection(Math.cos(angle), Math.sin(angle));
-    }*/
 
-    public void moveIaAléatoire(){
-        for (List<SnakeSegmentIA> ia : this.snakeIA) {
+    /*public void moveIaAléatoire(List<SnakeSegmentIA> ia){
             double newX, newY;
+            //On calcule les nouvelles coordonnées pour la tête du serpent
+            newX = ia.get(0).getX() + ia.get(0).getDirectionX() * SPEED;
+            newY = ia.get(0).getY() + ia.get(0).getDirectionY() * SPEED;
             //Chaque IA à un compte à rebours aléatoire pour changer de direction
             if (ia.get(0).getCountdown() <= 0) {
                 //Si on arrive à la fin on calcule un nouvel angle aléatoire pour la direction
@@ -170,37 +163,65 @@ public class Game {
             newX = ia.get(0).getX() + ia.get(0).getDirectionX() * SPEED;
             newY = ia.get(0).getY() + ia.get(0).getDirectionY() * SPEED;
             //On récupère les anciennes informations
-            int formerSize = ia.get(0).getSize();
             int formerCountdown = ia.get(0).getCountdown();
             //On met à jour les nouveaux paramètres
             ia.get(0).setX(newX);
             ia.get(0).setY(newY);
-            ia.get(0).setSize(formerSize);
             ia.get(0).setCountdown(formerCountdown);
             //On décrémente le compte à rebours
             ia.get(0).decreaseCountdown();
-        }
-    }
-    
-    public void moveIaKillStrat() {
-        for (List<SnakeSegmentIA> ia : this.snakeIA) {
-            SnakeSegment head = snake.get(0);
-            //On calcule la différence entre les coordonnées du snake et des IA 
-            double directionToPlayerX = head.getX() - ia.get(0).getX();
-            double directionToPlayerY = head.getY() - ia.get(0).getY();
-            //On calcule l'angle des IA par rapport au snake
-            double angleToPlayer = Math.atan2(directionToPlayerY, directionToPlayerX);
-            //On met à jour la direction
-            ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
-            //On calcule les nouvelles coordonnées pour la tête des IA 
-            double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (SPEED/2);
-            double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (SPEED/2);
-            //On met à jour les positions
             if(!isOffLimits(newX, newY)){
-                growIA(newX, newY, ia);
                 ia.get(0).setX(newX);
                 ia.get(0).setY(newY);
-            }              
+        }         
+        
+    }*/
+
+    private void moveIaFoodStrat(List<SnakeSegmentIA> ia){
+        
+    }
+    
+    
+    private void moveIaKillStrat(List<SnakeSegmentIA> ia) {
+        SnakeSegment head = snake.get(0);
+        //On calcule la différence entre les coordonnées du snake et des IA 
+        double distanceToPlayerX = head.getX() - ia.get(0).getX();
+        double distanceToPlayerY = head.getY() - ia.get(0).getY();
+        //On calcule l'angle des IA par rapport au snake
+        double angleToPlayer = Math.atan2(distanceToPlayerY, distanceToPlayerX);
+        //On met à jour la direction
+        ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
+        //On calcule les nouvelles coordonnées pour la tête des IA 
+        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (SPEED/2);
+        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (SPEED/2);
+        //On met à jour les positions
+        if(!isOffLimits(newX, newY)){
+            ia.get(0).setX(newX);
+            ia.get(0).setY(newY);
+        }              
+    }
+
+    private boolean isCloseToPlayer(List<SnakeSegmentIA> ia){
+        SnakeSegment head = snake.get(0);
+        double distanceToPlayerX = head.getX() - ia.get(0).getX();
+        double distanceToPlayerY = head.getY() - ia.get(0).getY();
+        double sq1 = Math.pow(distanceToPlayerX, 2);
+        double sq2 = Math.pow(distanceToPlayerY, 2);
+        double sum = sq1 + sq2;
+        return Math.sqrt(sum) < 250;
+    }
+
+    private void updateIA(){
+        for (List<SnakeSegmentIA> ia : this.snakeIA) {
+            if(isCloseToPlayer(ia)){
+                moveIaKillStrat(ia);
+                growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
+            }
+            else{
+                growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
+            }
         }
     }
 }
+
+

@@ -43,7 +43,7 @@ public class GamePane extends StackPane {
         for (List<SnakeSegmentIA> ia : game.getIA()){
             for (SnakeSegmentIA segment : ia) {
                 gc.setFill(Color.BLUE);
-                gc.fillOval(segment.getX(), segment.getY(), segment.getSize(), segment.getSize());
+                gc.fillOval(segment.getX(), segment.getY(), SnakeSegment.SIZE, SnakeSegment.SIZE);
             }
         }
     }
