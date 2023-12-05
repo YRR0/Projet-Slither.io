@@ -1,10 +1,12 @@
 package fr.uparis.informatique.cpoo5.projet.model;
 
+import javafx.scene.paint.Color;
 // La classe qui représente un segment du serpent dans le jeu
 public class SnakeSegment {
     // La taille d'un segment du serpent
     public static final double SIZE = 25;
 
+    Color color;
     private double x;  // La coordonnée x du segment du serpent
     private double y;  // La coordonnée y du segment du serpent
 
@@ -13,6 +15,13 @@ public class SnakeSegment {
         this.x = x;
         this.y = y;
     }
+
+    public SnakeSegment(double x, double y,Color a) {
+        this.x = x;
+        this.y = y;
+        this.color = a;
+    }
+
 
     // Accéder à la coordonnée x du segment
     public double getX() {
@@ -23,6 +32,8 @@ public class SnakeSegment {
     public double getY() {
         return y;
     }
+
+    public Color getColor(){return this.color;}
 
     // Définir la coordonnée x du segment
     public void setX(double x) {
