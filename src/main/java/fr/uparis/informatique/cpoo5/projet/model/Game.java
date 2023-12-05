@@ -137,9 +137,6 @@ public class Game {
         if(!isOffLimits(x, y)){
             foodList.add(new Food(x, y));
         }
-        else{
-            generateFood();
-        }
     }
 
     public Food getFood() {
