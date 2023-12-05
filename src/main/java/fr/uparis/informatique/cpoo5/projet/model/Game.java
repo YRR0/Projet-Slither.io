@@ -211,21 +211,27 @@ public class Game {
 
     private boolean isCloseToPlayer(List<SnakeSegmentIA> ia){
         SnakeSegment head = snake.get(0);
+        //On calcule les distances entre IA et le joueur
         double distanceToPlayerX = head.getX() - ia.get(0).getX();
         double distanceToPlayerY = head.getY() - ia.get(0).getY();
+        //Théorème de Pythagore pour avoir la distance
         double sq1 = Math.pow(distanceToPlayerX, 2);
         double sq2 = Math.pow(distanceToPlayerY, 2);
         double sum = sq1 + sq2;
+        //Si le joueur est à moins de 250 pixels, l'IA va vers le joueur
         return Math.sqrt(sum) < 250;
     }
 
     private void updateIA(){
         for (List<SnakeSegmentIA> ia : this.snakeIA) {
+            //On vérifie si une IA est proche
             if(isCloseToPlayer(ia)){
+                //Dans ce cas là on applique la stratégie kill
                 moveIaKillStrat(ia);
                 growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
             }
             else{
+                //Sinon on applique la stratégie food
                 moveIaFoodStrat(ia);
                 growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
             }
