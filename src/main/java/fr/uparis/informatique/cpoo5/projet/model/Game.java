@@ -134,7 +134,12 @@ public class Game {
         double x = Math.random() * WIDTH;
         double y = Math.random() * HEIGHT;
         //On ajoute à chaque fois dans la liste
-        foodList.add(new Food(x, y)); 
+        if(!isOffLimits(x, y)){
+            foodList.add(new Food(x, y));
+        }
+        else{
+            generateFood();
+        }
     }
 
     public Food getFood() {
@@ -144,43 +149,46 @@ public class Game {
     public List<Food> getFoodList() {
         return foodList;
     }
-
-    /*public void moveIaAléatoire(List<SnakeSegmentIA> ia){
-            double newX, newY;
-            //On calcule les nouvelles coordonnées pour la tête du serpent
-            newX = ia.get(0).getX() + ia.get(0).getDirectionX() * SPEED;
-            newY = ia.get(0).getY() + ia.get(0).getDirectionY() * SPEED;
-            //Chaque IA à un compte à rebours aléatoire pour changer de direction
-            if (ia.get(0).getCountdown() <= 0) {
-                //Si on arrive à la fin on calcule un nouvel angle aléatoire pour la direction
-                double randAngle = Math.toRadians(randomGenerator(0, 360));    
-                //On remet à 0 le compte à rebours       
-                ia.get(0).resetCountdown();
-                //On change la direction avec la nouvelle
-                ia.get(0).setDirection(Math.cos(randAngle), Math.sin(randAngle));
+    
+    private Food closestFood(SnakeSegmentIA head) {
+        //On prend comme min la valeur max de double pour être sûr
+        double distMin = Double.MAX_VALUE;
+        Food closest = null;
+        for(Food food : foodList) {
+            //Pour chaque nourriture on calcule la distance de coordonnées
+            double distanceToFoodX = head.getX() - food.getX();
+            double distanceToFoodY = head.getY() - food.getY();
+            //Théorème de Pythagore
+            double dist = Math.sqrt((distanceToFoodX * distanceToFoodX) + (distanceToFoodY * distanceToFoodY));
+            //Si on trouve une distance plus petite on change 
+            if(dist < distMin) {
+                distMin = dist;
+                closest = food;
             }
-            //On calcule les nouvelles coordonnées pour la tête du serpent
-            newX = ia.get(0).getX() + ia.get(0).getDirectionX() * SPEED;
-            newY = ia.get(0).getY() + ia.get(0).getDirectionY() * SPEED;
-            //On récupère les anciennes informations
-            int formerCountdown = ia.get(0).getCountdown();
-            //On met à jour les nouveaux paramètres
+        }
+        return closest;
+    }
+
+    private void moveIaFoodStrat(List<SnakeSegmentIA> ia) {
+        SnakeSegmentIA head = ia.get(0);
+        //On récupère la nourriture la plus proche        
+        Food closestFood = closestFood(head);
+        //On calcule leur distance
+        double distanceToFoodX = closestFood.getX() - head.getX();
+        double distanceToFoodY = closestFood.getY() - head.getY();
+        //On calcule l'angle
+        double angleToFood = Math.atan2(distanceToFoodY, distanceToFoodX);
+        //On met à jour la direction de l'IA
+        ia.get(0).setDirection(Math.cos(angleToFood), Math.sin(angleToFood));
+        //On calcule la nouvelle position
+        double newX = head.getX() + ia.get(0).getDirectionX() * SPEED;
+        double newY = head.getY() + ia.get(0).getDirectionY() * SPEED;
+        //On met à jour dans le cas où ce n'est pas hors limites        
+        if (!isOffLimits(newX, newY)) {
             ia.get(0).setX(newX);
             ia.get(0).setY(newY);
-            ia.get(0).setCountdown(formerCountdown);
-            //On décrémente le compte à rebours
-            ia.get(0).decreaseCountdown();
-            if(!isOffLimits(newX, newY)){
-                ia.get(0).setX(newX);
-                ia.get(0).setY(newY);
-        }         
-        
-    }*/
-
-    private void moveIaFoodStrat(List<SnakeSegmentIA> ia){
-        
+        }
     }
-    
     
     private void moveIaKillStrat(List<SnakeSegmentIA> ia) {
         SnakeSegment head = snake.get(0);
@@ -218,10 +226,9 @@ public class Game {
                 growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
             }
             else{
+                moveIaFoodStrat(ia);
                 growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
             }
         }
     }
 }
-
-
