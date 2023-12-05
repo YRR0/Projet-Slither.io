@@ -228,13 +228,13 @@ public class Game {
             if(isCloseToPlayer(ia)){
                 //Dans ce cas là on applique la stratégie kill
                 moveIaKillStrat(ia);
-                growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
             }
             else{
                 //Sinon on applique la stratégie food
                 moveIaFoodStrat(ia);
-                growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
             }
+            //On applique les collisions avec la nourriture
+            growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
         }
     }
 }
