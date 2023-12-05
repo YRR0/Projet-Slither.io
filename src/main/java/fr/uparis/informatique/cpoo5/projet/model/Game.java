@@ -200,13 +200,17 @@ public class Game {
         //On met à jour la direction
         ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
         //On calcule les nouvelles coordonnées pour la tête des IA 
-        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (SPEED/2);
-        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (SPEED/2);
+        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.40);
+        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.40);
         //On met à jour les positions
         if(!isOffLimits(newX, newY)){
             ia.get(0).setX(newX);
             ia.get(0).setY(newY);
         }              
+    }
+
+    public boolean PlayerIsTooBig(){
+        return snake.size() > 200;
     }
 
     private boolean isCloseToPlayer(List<SnakeSegmentIA> ia){
@@ -227,6 +231,10 @@ public class Game {
             //On vérifie si une IA est proche
             if(isCloseToPlayer(ia)){
                 //Dans ce cas là on applique la stratégie kill
+                moveIaKillStrat(ia);
+            }
+            //Si le joueur dépasse une certaine taille
+            else if(PlayerIsTooBig()){
                 moveIaKillStrat(ia);
             }
             else{
