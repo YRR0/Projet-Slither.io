@@ -60,8 +60,9 @@ public class Game {
 
     public void update() {
         SnakeSegment head = snake.get(0);
-        double newX = head.getX() + directionX * SPEED;
-        double newY = head.getY() + directionY * SPEED;
+
+        double newX = head.getX() + directionX * (speed ? SPEED*INC_SPEED : 1);
+        double newY = head.getY() + directionY * (speed ? SPEED*INC_SPEED : 1);
         grow(newX, newY, snake);
         updateIA();
     }

@@ -31,8 +31,7 @@ public class SnakeGame extends Application {
         Game game = new Game();
         GamePane gamePane = new GamePane(game);
         SnakeController gameController = new SnakeController(game, gamePane);
-        SnakeIAController iaGameController = new SnakeIAController(game, gamePane);
-
+        
 
         // Créer une scène avec le panneau de jeu
         Scene scene = new Scene(gamePane, WIDTH, HEIGHT);
