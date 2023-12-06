@@ -23,9 +23,6 @@ public class SnakeController {
 
     }
 
-    public void togglePause() {
-        game.setPaused(!game.isPaused());
-    }
 
     public void update() {
         game.update();
