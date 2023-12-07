@@ -1,10 +1,8 @@
 package fr.uparis.informatique.cpoo5.projet.model;
-import fr.uparis.informatique.cpoo5.projet.SnakeGame;
+import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 public class Game {
@@ -19,6 +17,7 @@ public class Game {
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private List<SnakeSegment> snake = new ArrayList<>();
     private List<List<SnakeSegmentIA>> snakeIA = new ArrayList<>();
+    private SnakeIAController iaController;
 
     private double directionX = 1;
     private double directionY = 0;
@@ -27,6 +26,7 @@ public class Game {
         snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
         generateIA();
         generateAllFood();
+        iaController = new SnakeIAController(this);
     }
 
     //Pour générer plusieurs aliments et les stocker
@@ -149,6 +149,10 @@ public class Game {
         return snakeIA;
     }
 
+    public double getSpeed(){
+        return SPEED;
+    }
+
     public void setDirection(double directionX, double directionY) {
         this.directionX = directionX;
         this.directionY = directionY;
@@ -170,61 +174,6 @@ public class Game {
 
     public List<Food> getFoodList() {
         return foodList;
-    }
-    
-    private Food closestFood(SnakeSegmentIA head) {
-        //On prend comme min la valeur max de double pour être sûr
-        double distMin = Double.MAX_VALUE;
-        Food closest = null;
-        for(Food food : foodList) {
-            //Pour chaque nourriture on calcule la distance de coordonnées
-            double distanceToFoodX = head.getX() - food.getX();
-            double distanceToFoodY = head.getY() - food.getY();
-            //Théorème de Pythagore
-            double dist = Math.sqrt((distanceToFoodX * distanceToFoodX) + (distanceToFoodY * distanceToFoodY));
-            //Si on trouve une distance plus petite on change 
-            if(dist < distMin) {
-                distMin = dist;
-                closest = food;
-            }
-        }
-        return closest;
-    }
-
-    private void moveIaFoodStrat(List<SnakeSegmentIA> ia) {
-        SnakeSegmentIA head = ia.get(0);
-        //On récupère la nourriture la plus proche        
-        Food closestFood = closestFood(head);
-        //On calcule leur distance
-        double distanceToFoodX = closestFood.getX() - head.getX();
-        double distanceToFoodY = closestFood.getY() - head.getY();
-        //On calcule l'angle
-        double angleToFood = Math.atan2(distanceToFoodY, distanceToFoodX);
-        //On met à jour la direction de l'IA
-        ia.get(0).setDirection(Math.cos(angleToFood), Math.sin(angleToFood));
-        //On calcule la nouvelle position
-        double newX = head.getX() + ia.get(0).getDirectionX() * SPEED;
-        double newY = head.getY() + ia.get(0).getDirectionY() * SPEED;
-        //On met à jour        
-        ia.get(0).setX(newX);
-        ia.get(0).setY(newY);
-    }
-    
-    private void moveIaKillStrat(List<SnakeSegmentIA> ia) {
-        SnakeSegment head = snake.get(0);
-        //On calcule la différence entre les coordonnées du snake et des IA 
-        double distanceToPlayerX = head.getX() - ia.get(0).getX();
-        double distanceToPlayerY = head.getY() - ia.get(0).getY();
-        //On calcule l'angle des IA par rapport au snake
-        double angleToPlayer = Math.atan2(distanceToPlayerY, distanceToPlayerX);
-        //On met à jour la direction
-        ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
-        //On calcule les nouvelles coordonnées pour la tête des IA 
-        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.35);
-        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.35);
-        //On met à jour les positions
-        ia.get(0).setX(newX);
-        ia.get(0).setY(newY);
     }
 
     public boolean PlayerIsTooBig(){
@@ -249,15 +198,15 @@ public class Game {
             //On vérifie si une IA est proche
             if(isCloseToPlayer(ia)){
                 //Dans ce cas là on applique la stratégie kill
-                moveIaKillStrat(ia);
+                iaController.moveIaKillStrat(ia);
             }
             //Si le joueur dépasse une certaine taille
             else if(PlayerIsTooBig()){
-                moveIaKillStrat(ia);
+                iaController.moveIaKillStrat(ia);
             }
             else{
                 //Sinon on applique la stratégie food
-                moveIaFoodStrat(ia);
+                iaController.moveIaFoodStrat(ia);
             }
             //On applique les collisions avec la nourriture
             growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
