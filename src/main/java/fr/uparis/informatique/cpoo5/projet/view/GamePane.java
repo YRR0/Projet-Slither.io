@@ -41,16 +41,20 @@ public class GamePane extends StackPane {
         double offsetX = WIDTH / 2 - head.getX();
         double offsetY = HEIGHT / 2 - head.getY();
 
-        gc.drawImage(backgroundImage,offsetX,offsetY,WIDTH,HEIGHT);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                double backgroundX = (backgroundImage.getWidth() * i + offsetX) % WIDTH;
+                double backgroundY = (backgroundImage.getHeight() * j + offsetY) % HEIGHT;
 
-        /// Afficher tous les éléments décalés par la différence calculée
+                // Afficher le fond d'écran décalé
+                gc.drawImage(backgroundImage, backgroundX, backgroundY);
+            }
+        }
+
+        // Afficher tous les éléments décalés par la différence calculée
         for (Food food : game.getFoodList()) {
-            double adjustedX = (food.getX() + offsetX) % WIDTH;
-            double adjustedY = (food.getY() + offsetY) % HEIGHT;
-
-            // Normaliser les coordonnées après ajustement
-            adjustedX = (adjustedX + WIDTH) % WIDTH;
-            adjustedY = (adjustedY + HEIGHT) % HEIGHT;
+            double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
+            double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
 
             gc.setFill(food.getColor());
             gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
@@ -58,31 +62,25 @@ public class GamePane extends StackPane {
 
         // Dessiner le serpent
         for (SnakeSegment segment : game.getSnake()) {
-            double adjustedX = (segment.getX() + offsetX) % WIDTH;
-            double adjustedY = (segment.getY() + offsetY) % HEIGHT;
+            double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
+            double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
-            // Normaliser les coordonnées après ajustement
-            adjustedX = (adjustedX + WIDTH) % WIDTH;
-            adjustedY = (adjustedY + HEIGHT) % HEIGHT;
+            // Facteur de croissance en fonction de la taille du serpent
+            double growthFactor = 1.0 + game.getSnake().size() * 0.0005;
 
             gc.setFill(segment.getColor());
-            gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
+            gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
         }
 
         // Dessiner les IA
         for (List<SnakeSegmentIA> ia : game.getIA()) {
             for (SnakeSegmentIA segment : ia) {
-                double adjustedX = (segment.getX() + offsetX) % WIDTH;
-                double adjustedY = (segment.getY() + offsetY) % HEIGHT;
-
-                // Normaliser les coordonnées après ajustement
-                adjustedX = (adjustedX + WIDTH) % WIDTH;
-                adjustedY = (adjustedY + HEIGHT) % HEIGHT;
+                double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
+                double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
                 gc.setFill(Color.BLUE);
                 gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
             }
         }
     }
-    
 }

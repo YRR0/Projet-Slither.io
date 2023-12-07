@@ -1,4 +1,5 @@
 package fr.uparis.informatique.cpoo5.projet.model;
+import fr.uparis.informatique.cpoo5.projet.SnakeGame;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +13,12 @@ public class Game {
     private Food food;
     private List<Food> foodList = new ArrayList<>(); //Pour stocker tous les aliments de la map
     private static final double SPEED = 0.5;
-
     private static final double INC_SPEED = 2.0;
     private boolean speed;
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private List<SnakeSegment> snake = new ArrayList<>();
     private List<List<SnakeSegmentIA>> snakeIA = new ArrayList<>();
-
-
 
     private double directionX = 1;
     private double directionY = 0;
@@ -63,8 +61,21 @@ public class Game {
 
         double newX = head.getX() + directionX * (speed ? INC_SPEED : 1);
         double newY = head.getY() + directionY * (speed ? INC_SPEED : 1);
-        grow(newX, newY, snake);
-        updateIA();
+
+        // Vérifier la collision avec le corps du serpent
+        if (checkSelfCollision(newX, newY)) {
+            // Gérer la collision ici (par exemple, redémarrer le jeu, afficher un message, etc.)
+            // Dans cet exemple, on réinitialise simplement le serpent et la nourriture
+            this.setPaused(true);
+            //snake.clear();
+            //snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
+            //foodList.clear();
+            //generateAllFood();
+        } else {
+            // Si aucune collision avec le corps, continuer normalement
+            grow(newX, newY, snake);
+            updateIA();
+        }
     }
 
     private void grow(double newX, double newY, List<SnakeSegment> snake){
@@ -75,13 +86,6 @@ public class Game {
             if (isCollidingWithFood(food, snake.get(0))) {
                 // Taille augmente en fonction de la taille de la nourriture
                 for (int i = 0; i < food.getSize() / 2; ++i) {
-                    /*if (i == 0) {
-                        // Utiliser la couleur spécifiée pour la tête
-                        snake.add(i, new SnakeSegment(newX, newY, Color.BLACK));
-                    } else {
-                        // Utiliser la couleur verte par défaut pour le reste du corps
-                        snake.add(i, new SnakeSegment(newX, newY,Color.GREEN));
-                    }*/
                     snake.add(i,new SnakeSegment(newX, newY,food.getColor()));
                 }
                 // On retire de la liste originale
@@ -123,6 +127,18 @@ public class Game {
                 head.getX() + SnakeSegment.SIZE > f.getX() &&
                 head.getY() < f.getY() + f.getSize() &&
                 head.getY() + SnakeSegment.SIZE > f.getY();
+    }
+
+    private boolean checkSelfCollision(double newX, double newY) {
+        // Vérifier la collision avec le propre corps du serpent
+        for (int i = 1; i < snake.size(); i++) {
+            SnakeSegment segment = snake.get(i);
+            if (newX == segment.getX() && newY == segment.getY()) {
+                System.out.println("I "+i+" newX : " + newX +" newY : " + newY + " x : " + segment.getX() + " y : "+ segment.getY());
+                return true;  // Collision détectée
+            }
+        }
+        return false;  // Aucune collision
     }
 
     public List<SnakeSegment> getSnake() {
@@ -251,10 +267,13 @@ public class Game {
     public double getWidth() {
         return WIDTH;
     }
-
     public double getHeight() {
         return HEIGHT;
     }
+
+    public double getDirectionX(){return this.directionX;}
+    public double getDirectionY(){return this.directionY;}
+
 
     public void increaseSpeed() {
        speed = true;
