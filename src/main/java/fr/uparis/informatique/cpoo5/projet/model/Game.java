@@ -31,7 +31,7 @@ public class Game {
 
     //Pour générer plusieurs aliments et les stocker
     private void generateAllFood() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             generateFood();
         }
     }
@@ -85,7 +85,7 @@ public class Game {
             // Vérifier la collision avec la nourriture
             if (isCollidingWithFood(food, snake.get(0))) {
                 // Taille augmente en fonction de la taille de la nourriture
-                for (int i = 0; i < food.getSize() / 2; ++i) {
+                for (int i = 0; i < food.getSize(); ++i) {
                     snake.add(i,new SnakeSegment(newX, newY,food.getColor()));
                 }
                 // On retire de la liste originale
@@ -122,19 +122,32 @@ public class Game {
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
+        double offsetX = WIDTH / 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
+
+        // Normaliser les coordonnées de la nourriture après ajustement
+        double normalizedFoodX = (f.getX() + offsetX + WIDTH) % WIDTH;
+        double normalizedFoodY = (f.getY() + offsetY + HEIGHT) % HEIGHT;
+
+        // Normaliser les coordonnées de la tête après ajustement
+        double normalizedHeadX = (head.getX() + offsetX + WIDTH) % WIDTH;
+        double normalizedHeadY = (head.getY() + offsetY + HEIGHT) % HEIGHT;
+
         // Vérifier la collision avec la zone de la nourriture
-        return head.getX() < f.getX() + f.getSize() &&
-                head.getX() + SnakeSegment.SIZE > f.getX() &&
-                head.getY() < f.getY() + f.getSize() &&
-                head.getY() + SnakeSegment.SIZE > f.getY();
+        return normalizedHeadX < normalizedFoodX + f.getSize() &&
+                normalizedHeadX + SnakeSegment.SIZE > normalizedFoodX &&
+                normalizedHeadY < normalizedFoodY + f.getSize() &&
+                normalizedHeadY + SnakeSegment.SIZE > normalizedFoodY;
     }
 
     private boolean checkSelfCollision(double newX, double newY) {
         // Vérifier la collision avec le propre corps du serpent
         for (int i = 1; i < snake.size(); i++) {
             SnakeSegment segment = snake.get(i);
-            if (newX == segment.getX() && newY == segment.getY()) {
-                System.out.println("I "+i+" newX : " + newX +" newY : " + newY + " x : " + segment.getX() + " y : "+ segment.getY());
+
+            // Comparer les coordonnées avec une petite marge d'erreur
+            if (Math.abs(newX - segment.getX()) < 0.1 && Math.abs(newY - segment.getY()) < 0.1) {
+                System.out.println("I " + i + " newX: " + newX + " newY: " + newY + " x: " + segment.getX() + " y: " + segment.getY());
                 return true;  // Collision détectée
             }
         }

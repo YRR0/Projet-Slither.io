@@ -33,14 +33,13 @@ public class GamePane extends StackPane {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, WIDTH, HEIGHT);
 
-
-
         // Trouver la tête du serpent
         SnakeSegment head = game.getSnake().get(0);
         // Calculer la différence pour centrer la vue
         double offsetX = WIDTH / 2 - head.getX();
         double offsetY = HEIGHT / 2 - head.getY();
 
+        /* Fond rectangle */
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 double backgroundX = (backgroundImage.getWidth() * i + offsetX) % WIDTH;
