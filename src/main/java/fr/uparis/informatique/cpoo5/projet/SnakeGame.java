@@ -1,15 +1,16 @@
 package fr.uparis.informatique.cpoo5.projet;
+import com.sun.scenario.effect.impl.prism.PrImage;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeController;
-import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
+import fr.uparis.informatique.cpoo5.projet.view.PausePane;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.scene.input.MouseEvent;
+
 
 
 // La classe principale de l'application, étendant la classe Application de JavaFX
@@ -31,11 +32,9 @@ public class SnakeGame extends Application {
         Game game = new Game();
         GamePane gamePane = new GamePane(game);
         SnakeController gameController = new SnakeController(game, gamePane);
-        
 
-        // Créer une scène avec le panneau de jeu
+
         Scene scene = new Scene(gamePane, WIDTH, HEIGHT);
-
         // Gérer les mouvements de la souris pour changer la direction du serpent
         scene.setOnMouseMoved(gameController::handleMouseMove);
         scene.setOnKeyPressed(gameController::handleKeyPress);
