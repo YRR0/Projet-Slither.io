@@ -3,11 +3,9 @@ package fr.uparis.informatique.cpoo5.projet.model.factoryColor;
 import javafx.scene.paint.Color;
 import java.util.Random;
 
-
 // Implémentation concrète de la Factory
 public class RandomColorFactory implements ColorFactory {
     private Color randomColor;
-
     public RandomColorFactory() {
         generateRandomColor();
     }

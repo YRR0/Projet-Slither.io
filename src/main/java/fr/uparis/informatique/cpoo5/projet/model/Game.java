@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 public class Game {
-
     private boolean paused = false;
     private Food food;
     private List<Food> foodList = new ArrayList<>(); //Pour stocker tous les aliments de la map
@@ -71,7 +70,13 @@ public class Game {
             //snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
             //foodList.clear();
             //generateAllFood();
-        } else {
+        }
+        else if (checkCollisionWithIA()) {
+            // Gérer la collision avec une IA
+            //this.setPaused(true);
+            //snakeIA.clear();
+        }
+        else {
             // Si aucune collision avec le corps, continuer normalement
             grow(newX, newY, snake);
             updateIA();
@@ -146,12 +151,67 @@ public class Game {
             SnakeSegment segment = snake.get(i);
 
             // Comparer les coordonnées avec une petite marge d'erreur
-            if (Math.abs(newX - segment.getX()) < 0.1 && Math.abs(newY - segment.getY()) < 0.1) {
+            double collisionMargin = 0.1;
+            if (Math.abs(newX - segment.getX()) < collisionMargin &&
+                    Math.abs(newY - segment.getY()) < collisionMargin) {
                 System.out.println("I " + i + " newX: " + newX + " newY: " + newY + " x: " + segment.getX() + " y: " + segment.getY());
                 return true;  // Collision détectée
             }
         }
         return false;  // Aucune collision
+    }
+
+    private boolean checkCollisionWithIA() {
+        // Récupérer la tête du serpent du joueur
+        SnakeSegment head = snake.get(0);
+
+        // Calculer la différence pour centrer la vue
+        double offsetX = WIDTH / 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
+
+        // Normaliser les coordonnées de la tête après ajustement
+        double normalizedHeadX = (head.getX() + offsetX + WIDTH) % WIDTH;
+        double normalizedHeadY = (head.getY() + offsetY + HEIGHT) % HEIGHT;
+
+        // Parcourir toutes les IA pour vérifier la collision avec leur tête
+        for (List<SnakeSegmentIA> ia : snakeIA) {
+            SnakeSegmentIA iaHead = ia.get(0);
+
+            // Normaliser les coordonnées de la tête de l'IA après ajustement
+            double normalizedIAHeadX = (iaHead.getX() + offsetX + WIDTH) % WIDTH;
+            double normalizedIAHeadY = (iaHead.getY() + offsetY + HEIGHT) % HEIGHT;
+
+            // Vérifier la collision avec la tête de l'IA
+            if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
+                    normalizedHeadX + SnakeSegment.SIZE > normalizedIAHeadX &&
+                    normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
+                    normalizedHeadY + SnakeSegment.SIZE > normalizedIAHeadY) {
+                // Collision détectée
+                System.out.println("Collision IA");
+                convertIAToFood(snakeIA.get(0));
+                return true;
+            }
+        }
+        // Aucune collision avec les IA
+        return false;
+    }
+
+    private void convertIAToFood(List<SnakeSegmentIA> ia) {
+        // Convertir chaque segment de l'IA en une Food
+        for (SnakeSegmentIA segmentIA : ia) {
+            double x = segmentIA.getX();
+            double y = segmentIA.getY();
+
+            // Créer une nouvelle Food à la position de l'ancien segment de l'IA
+            Food newFood = new Food(x, y, segmentIA.getColor());
+            // Ajouter la nouvelle Food à la liste des Food
+            foodList.add(newFood);
+        }
+
+        // Retirer l'IA de la liste des IA, elle va réapparaître autre part
+        snakeIA.remove(ia);
+        // Générer une nouvelle IA à un emplacement aléatoire
+        generateIA();
     }
 
     public List<SnakeSegment> getSnake() {
@@ -233,8 +293,8 @@ public class Game {
         //On met à jour la direction
         ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
         //On calcule les nouvelles coordonnées pour la tête des IA 
-        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.35);
-        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.35);
+        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.5);
+        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.5);
         //On met à jour les positions
         ia.get(0).setX(newX);
         ia.get(0).setY(newY);
@@ -246,15 +306,29 @@ public class Game {
 
     private boolean isCloseToPlayer(List<SnakeSegmentIA> ia){
         SnakeSegment head = snake.get(0);
-        //On calcule les distances entre IA et le joueur
+
+        // On calcule les distances entre IA et le joueur
         double distanceToPlayerX = head.getX() - ia.get(0).getX();
         double distanceToPlayerY = head.getY() - ia.get(0).getY();
-        //Théorème de Pythagore pour avoir la distance
+
+        // Théorème de Pythagore pour avoir la distance
         double sq1 = Math.pow(distanceToPlayerX, 2);
         double sq2 = Math.pow(distanceToPlayerY, 2);
         double sum = sq1 + sq2;
-        //Si le joueur est à moins de 250 pixels, l'IA va vers le joueur
-        return Math.sqrt(sum) < 250;
+
+        // On prend en compte l'offset
+        double offsetX = WIDTH / 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
+
+        // On met à jour les distances avec l'offset
+        double distanceToPlayerWithOffsetX = distanceToPlayerX + offsetX;
+        double distanceToPlayerWithOffsetY = distanceToPlayerY + offsetY;
+
+        // Théorème de Pythagore pour la distance avec l'offset
+        double sumWithOffset = Math.pow(distanceToPlayerWithOffsetX, 2) + Math.pow(distanceToPlayerWithOffsetY, 2);
+
+        // Si le joueur est à moins de 250 pixels, l'IA va vers le joueur
+        return Math.sqrt(sumWithOffset) < 500;
     }
 
     private void updateIA(){
