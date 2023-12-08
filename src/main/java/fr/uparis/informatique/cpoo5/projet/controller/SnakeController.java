@@ -7,8 +7,6 @@ import fr.uparis.informatique.cpoo5.projet.view.PausePane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import java.awt.event.MouseEvent;
-
 public class SnakeController {
     private Game game;
     private GamePane gamePane;
@@ -19,7 +17,6 @@ public class SnakeController {
         this.gamePane = gamePane;
 
     }
-
 
     public void update() {
         game.update();

@@ -1,9 +1,7 @@
 package fr.uparis.informatique.cpoo5.projet;
-import com.sun.scenario.effect.impl.prism.PrImage;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeController;
-import fr.uparis.informatique.cpoo5.projet.view.PausePane;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
