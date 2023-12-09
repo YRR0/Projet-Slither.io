@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 
-
 // La classe principale de l'application, étendant la classe Application de JavaFX
 public class SnakeGame extends Application {
 
@@ -31,7 +30,6 @@ public class SnakeGame extends Application {
         GamePane gamePane = new GamePane(game);
         SnakeController gameController = new SnakeController(game, gamePane);
 
-
         Scene scene = new Scene(gamePane, WIDTH, HEIGHT);
         // Gérer les mouvements de la souris pour changer la direction du serpent
         scene.setOnMouseMoved(gameController::handleMouseMove);
@@ -47,7 +45,7 @@ public class SnakeGame extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (!game.isPaused()) {
+                if (game.isPaused()) {
                     // Mettre à jour l'état du jeu et rendre le panneau de jeu
                     gameController.update();
                 }

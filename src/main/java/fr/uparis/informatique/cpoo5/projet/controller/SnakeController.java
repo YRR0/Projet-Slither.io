@@ -3,15 +3,13 @@ package fr.uparis.informatique.cpoo5.projet.controller;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
-import fr.uparis.informatique.cpoo5.projet.view.PausePane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
 
 public class SnakeController {
     private Game game;
     private GamePane gamePane;
-
-    private PausePane pause;
     public SnakeController(Game game, GamePane gamePane) {
         this.game = game;
         this.gamePane = gamePane;
@@ -32,28 +30,19 @@ public class SnakeController {
 
         // Vérifier si la souris est toujours à l'intérieur des limites de l'écran
         if (mouseX >= 0 && mouseX < game.getWidth() && mouseY >= 0 && mouseY < game.getHeight()) {
-            // Calculer la direction vers la position de la souris
+            // Calculer la direction directe vers la position de la souris
             double directionX = mouseX - head.getX();
             double directionY = mouseY - head.getY();
 
-            // Calculer l'angle entre la direction actuelle et la nouvelle direction
-            double currentAngle = Math.atan2(game.getDirectionY(), game.getDirectionX());
-            double targetAngle = Math.atan2(directionY, directionX);
-
-            // Appliquer une interpolation pour adoucir le changement de direction
-            double angleDifference = targetAngle - currentAngle;
-            if (angleDifference > Math.PI) {
-                angleDifference -= 2 * Math.PI;
-            } else if (angleDifference < -Math.PI) {
-                angleDifference += 2 * Math.PI;
+            // Normaliser la direction pour obtenir une unité de vecteur
+            double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
+            if (magnitude > 0) {
+                directionX /= magnitude;
+                directionY /= magnitude;
             }
 
-            double maxChange = Math.toRadians(4);
-            double finalAngle = currentAngle + Math.min(maxChange, Math.abs(angleDifference))
-                    * Math.signum(angleDifference);
-
             // Mettre à jour la direction avec la nouvelle orientation
-            game.setDirection(Math.cos(finalAngle), Math.sin(finalAngle));
+            game.setDirection(directionX, directionY);
         }
     }
 

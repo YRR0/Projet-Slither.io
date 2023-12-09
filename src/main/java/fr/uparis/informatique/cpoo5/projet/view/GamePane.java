@@ -15,23 +15,21 @@ import javafx.scene.image.Image;
 public class GamePane extends StackPane {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
-    private Image backgroundImage;
     private Game game;
     private Canvas canvas;
 
     public GamePane(Game game) {
         this.game = game;
         this.canvas = new Canvas(WIDTH, HEIGHT);
-        backgroundImage = new Image("/images/fond2.png");
-
-        // Appliquer l'image de fond au canevas
-        canvas.getGraphicsContext2D().drawImage(backgroundImage, 0, 0, WIDTH, HEIGHT);
         getChildren().add(canvas);
     }
 
     public void render() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, WIDTH, HEIGHT);
+        // Définir la couleur de fond comme noir
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
 
         // Trouver la tête du serpent
         SnakeSegment head = game.getSnake().get(0);
@@ -39,25 +37,16 @@ public class GamePane extends StackPane {
         double offsetX = WIDTH / 2 - head.getX();
         double offsetY = HEIGHT / 2 - head.getY();
 
-        /* Fond rectangle */
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                double backgroundX = (backgroundImage.getWidth() * i + offsetX) % WIDTH;
-                double backgroundY = (backgroundImage.getHeight() * j + offsetY) % HEIGHT;
-
-                // Afficher le fond d'écran décalé
-                gc.drawImage(backgroundImage, backgroundX, backgroundY);
-            }
-        }
-
         // Afficher tous les éléments décalés par la différence calculée
         for (Food food : game.getFoodList()) {
-            double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
-            double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
+            if(!food.food_or_deadFood()) {
+                double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
+                double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
 
-            gc.setFill(food.getColor());
-            gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
-        }
+                gc.setFill(food.getColor());
+                gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
+                }
+            }
 
         // Dessiner le serpent
         for (SnakeSegment segment : game.getSnake()) {
@@ -65,7 +54,7 @@ public class GamePane extends StackPane {
             double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
             // Facteur de croissance en fonction de la taille du serpent
-            double growthFactor = 1.0 + game.getSnake().size() * 0.0005;
+            double growthFactor = 1.0 + game.getSnake().size() * 0.000005;
 
             gc.setFill(segment.getColor());
             gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);

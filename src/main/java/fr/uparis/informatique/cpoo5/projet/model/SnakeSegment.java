@@ -5,8 +5,7 @@ import javafx.scene.paint.Color;
 public class SnakeSegment {
     // La taille d'un segment du serpent
     public static final double SIZE = 25;
-
-    Color color;
+    private Color color;
     private double x;  // La coordonnée x du segment du serpent
     private double y;  // La coordonnée y du segment du serpent
 
@@ -15,13 +14,11 @@ public class SnakeSegment {
         this.x = x;
         this.y = y;
     }
-
     public SnakeSegment(double x, double y,Color a) {
         this.x = x;
         this.y = y;
         this.color = a;
     }
-
 
     // Accéder à la coordonnée x du segment
     public double getX() {

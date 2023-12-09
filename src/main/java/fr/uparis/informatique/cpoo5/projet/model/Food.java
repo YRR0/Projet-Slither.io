@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 public class Food {
     // La taille d'un aliment
     private double size;
-
+    private boolean snakeDead;
     private double x;  // La coordonnée x de l'aliment
     private double y;  // La coordonnée y de l'aliment
 
@@ -31,6 +31,8 @@ public class Food {
         return y;
     }
 
+    public boolean food_or_deadFood(){return this.snakeDead;}
+    public void setDead_Food(boolean a){this.snakeDead = true;}
     public void setX(double x){this.x = x;}
     public void setY(double y){this.y = y;}
     public Color getColor(){ return this.color ;}
