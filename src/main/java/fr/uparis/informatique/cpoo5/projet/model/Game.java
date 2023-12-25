@@ -1,10 +1,18 @@
 package fr.uparis.informatique.cpoo5.projet.model;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
+import javafx.stage.Screen;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
+    private static  double WIDTH ;//= (int) Screen.getPrimary().getBounds().getWidth();
+    private static  double HEIGHT ;//= (int) Screen.getPrimary().getBounds().getHeight();
+
+
     private boolean paused = false;
     private boolean speed;
     private List<Food> foodList = new ArrayList<>(); //Pour stocker tous les aliments de la map
@@ -16,11 +24,22 @@ public class Game {
     private GameConfig gameConfig;
 
     public Game() {
+        initializeDimensions();
         this.gameConfig = new GameConfig();
-        snake.add(new SnakeSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
+        snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
         generateIA();
         generateAllFood();
         iaController = new SnakeIAController(this);
+    }
+
+    private void initializeDimensions() {
+        // Utilisation de la classe Toolkit pour obtenir les dimensions de l'écran
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+
+        // Assignation des dimensions à vos variables WIDTH et HEIGHT
+        WIDTH = screenSize.getWidth();
+        HEIGHT = screenSize.getHeight();
     }
 
     //Pour générer plusieurs aliments et les stocker
@@ -37,8 +56,8 @@ public class Game {
         int randPosY;
         List<SnakeSegmentIA> ia;
         for(int i = 0; i<nbrIA; ++i){
-            randPosX = randomGenerator(0, (int)gameConfig.getWidth());
-            randPosY = randomGenerator(0, (int)gameConfig.getHeight());
+            randPosX = randomGenerator(0, (int)WIDTH);
+            randPosY = randomGenerator(0, (int)HEIGHT);
             ia = new ArrayList<>();
             ia.add(new SnakeSegmentIA(randPosX, randPosY));
             snakeIA.add(ia);
@@ -127,16 +146,16 @@ public class Game {
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
-        double offsetX = gameConfig.getWidth() / 2 - head.getX();
-        double offsetY = gameConfig.getHeight() / 2 - head.getY();
+        double offsetX =WIDTH / 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
 
         // Normaliser les coordonnées de la nourriture après ajustement
-        double normalizedFoodX = (f.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
-        double normalizedFoodY = (f.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+        double normalizedFoodX = (f.getX() + offsetX + WIDTH) % WIDTH;
+        double normalizedFoodY = (f.getY() + offsetY + HEIGHT) % HEIGHT;
 
         // Normaliser les coordonnées de la tête après ajustement
-        double normalizedHeadX = (head.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
-        double normalizedHeadY = (head.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+        double normalizedHeadX = (head.getX() + offsetX +WIDTH) % WIDTH;
+        double normalizedHeadY = (head.getY() + offsetY + HEIGHT) % HEIGHT;
 
         // Vérifier la collision avec la zone de la nourriture
         return normalizedHeadX < normalizedFoodX + f.getSize() &&
@@ -168,20 +187,20 @@ public class Game {
         SnakeSegment head = snake.get(0);
 
         // Calculer la différence pour centrer la vue
-        double offsetX = gameConfig.getWidth() / 2 - head.getX();
-        double offsetY = gameConfig.getHeight() / 2 - head.getY();
+        double offsetX = WIDTH / 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
 
         // Normaliser les coordonnées de la tête après ajustement
-        double normalizedHeadX = (head.getX() + offsetX + gameConfig.getWidth() ) % gameConfig.getWidth() ;
-        double normalizedHeadY = (head.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+        double normalizedHeadX = (head.getX() + offsetX + WIDTH) % WIDTH ;
+        double normalizedHeadY = (head.getY() + offsetY + HEIGHT) %HEIGHT;
 
         // Parcourir toutes les IA pour vérifier la collision avec leur tête
         for (List<SnakeSegmentIA> ia : snakeIA) {
             SnakeSegmentIA iaHead = ia.get(0);
 
             // Normaliser les coordonnées de la tête de l'IA après ajustement
-            double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth() ) % gameConfig.getWidth() ;
-            double normalizedIAHeadY = (iaHead.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+            double normalizedIAHeadX = (iaHead.getX() + offsetX + WIDTH ) % HEIGHT ;
+            double normalizedIAHeadY = (iaHead.getY() + offsetY + WIDTH) % HEIGHT;
 
             // Vérifier la collision avec la tête de l'IA
             if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
@@ -210,9 +229,7 @@ public class Game {
             newFood.setDead_Food(true);
 
             foodList.add(newFood);
-
         }
-
         // Retirer l'IA de la liste des IA, elle va réapparaître autre part
         snakeIA.remove(ia);
         // Générer une nouvelle IA à un emplacement aléatoire
@@ -237,8 +254,8 @@ public class Game {
     }
 
     private void generateFood() {
-        double x = Math.random() * gameConfig.getWidth() ;
-        double y = Math.random() * gameConfig.getHeight();
+        double x = Math.random() * WIDTH;
+        double y = Math.random() * HEIGHT;
 
         //On ajoute à chaque fois dans la liste
         RandomColorFactory f = new RandomColorFactory();
@@ -265,8 +282,8 @@ public class Game {
         double sq1 = Math.pow(distanceToPlayerX, 2);
 
         // On prend en compte l'offset
-        double offsetX = gameConfig.getWidth() / 2 - head.getX();
-        double offsetY = gameConfig.getHeight() / 2 - head.getY();
+        double offsetX = WIDTH/ 2 - head.getX();
+        double offsetY = HEIGHT / 2 - head.getY();
 
         // On met à jour les distances avec l'offset
         double distanceToPlayerWithOffsetX = distanceToPlayerX + offsetX;
@@ -300,10 +317,10 @@ public class Game {
     }
 
     public double getWidth() {
-        return gameConfig.getWidth();
+        return WIDTH;
     }
     public double getHeight() {
-        return gameConfig.getHeight();
+        return HEIGHT;
     }
 
     public void increaseSpeed() {
@@ -325,4 +342,6 @@ public class Game {
     public void togglePause() {
         setPaused(isPaused());
     }
+
+    // Quitter la partie si c'est gameOver à rajouter
 }
