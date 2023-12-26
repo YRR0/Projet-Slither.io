@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Serveur implements Runnable {
+    private int playerIdCounter = 1;
     private final int PORT = 12345;
     private ServerSocket serverSocket;
     private List<ClientHandler> clients = new ArrayList<>();
@@ -31,14 +32,29 @@ public class Serveur implements Runnable {
                 System.out.println("Nouvelle connexion: " + clientSocket);
 
                 // Créer un gestionnaire de client pour gérer la communication avec ce client
-                ClientHandler clientHandler = new ClientHandler(clientSocket, game);
+                ClientHandler clientHandler = new ClientHandler(this,clientSocket, game);
                 clients.add(clientHandler);
+                System.out.println("On a assigné un serpent au client  ");
 
-                // Démarrer le gestionnaire de client dans un thread séparé
-                new Thread(clientHandler).start();
+                synchronized (game) {
+                    clientHandler.assignUniqueSnake();
+                }
+                playerIdCounter++;
+
+                //new Thread(clientHandler).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void broadcastMessage(String message) {
+        for (ClientHandler client : clients) {
+            client.sendMessage(message);
+        }
+    }
+
+    public  int getServeurId(){
+        return this.playerIdCounter;
     }
 }

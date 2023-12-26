@@ -10,9 +10,7 @@ import fr.uparis.informatique.cpoo5.projet.model.Game;
 
         public SnakeGameClient(Game game) {
             this.game = game;
-
             try {
-                // Remplacez "localhost" et 12345 par l'adresse IP et le port de votre serveur
                 this.socket = new Socket("localhost", 12345);
                 this.output = new PrintWriter(socket.getOutputStream(), true);
             } catch (IOException e) {
@@ -23,8 +21,9 @@ import fr.uparis.informatique.cpoo5.projet.model.Game;
         public void sendPlayerInfo() {
             double directionX = game.getSnake().get(0).getX();
             double directionY = game.getSnake().get(0).getY();
+            String message = "DIRECTION " + directionX + " " + directionY;
+            output.println(message);
+            System.out.println("Sent message to server: " + message);
 
-            //String message = String.format("%s %f %f", NetworkMessage.PLAYER_INFO, directionX, directionY);
-            //output.println(message);
         }
 }

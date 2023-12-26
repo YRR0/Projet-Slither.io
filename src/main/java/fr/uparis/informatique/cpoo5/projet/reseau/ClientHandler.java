@@ -5,17 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 public class ClientHandler implements Runnable {
+    private Serveur serveur;
     private Socket clientSocket;
     private Game game;
+    private int playerId;
     private BufferedReader input;
     private PrintWriter output;
 
-    public ClientHandler(Socket clientSocket, Game game) {
+    public ClientHandler(Serveur s, Socket clientSocket, Game game) {
         this.clientSocket = clientSocket;
         this.game = game;
-
+        this.serveur = s;
         try {
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             output = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -27,54 +28,26 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            String inputLine;
-            while ((inputLine = input.readLine()) != null) {
-                processCommand(inputLine);
+            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            String message;
+            while (true) {
+                message = input.readLine();
+                if(  message != null) {
+                    System.out.println("Received message from client: " + message);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void processCommand(String command) {
-        // Traiter la commande du client
-        switch (command) {
-            case NetworkMessage.MOVE_UP:
-                game.setDirection(0, -1);
-                break;
-            case NetworkMessage.MOVE_DOWN:
-                game.setDirection(0, 1);
-                break;
-            case NetworkMessage.MOVE_LEFT:
-                game.setDirection(-1, 0);
-                break;
-            case NetworkMessage.MOVE_RIGHT:
-                game.setDirection(1, 0);
-                break;
-            case NetworkMessage.READY:
-
-                break;
-            case NetworkMessage.START_GAME:
-
-                break;
-            // Ajoutez d'autres commandes si nécessaire
-        }
+    public void assignUniqueSnake() {
+            game.assignSnakeToPlayer(serveur.getServeurId());
+            // Envoyer l'ID du joueur au client
+            output.println("PLAYER_ID " + serveur.getServeurId());
     }
 
-    private void handlePlayerReady() {
-
-    }
-
-    private void handleStartGame() {
-
-        if (allPlayersReady()) {
-
-        } else {
-
-        }
-    }
-
-    private boolean allPlayersReady() {
-        return true;
+    public void sendMessage(String message) {
+        output.println(message);
     }
 }
