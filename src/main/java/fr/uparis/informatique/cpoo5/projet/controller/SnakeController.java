@@ -17,8 +17,8 @@ public class SnakeController {
     }
 
     public void update() {
-        game.update();
-        gamePane.render();
+            game.update();
+            gamePane.render();
     }
 
     // Méthode pour bien controler le jeu
@@ -28,22 +28,19 @@ public class SnakeController {
 
         SnakeSegment head = game.getSnake().get(0);
 
-        // Vérifier si la souris est toujours à l'intérieur des limites de l'écran
-        if (mouseX >= 0 && mouseX < game.getWidth() && mouseY >= 0 && mouseY < game.getHeight()) {
-            // Calculer la direction directe vers la position de la souris
-            double directionX = mouseX - head.getX();
-            double directionY = mouseY - head.getY();
+        // Calculer la direction directe vers la position de la souris
+        double directionX = mouseX - head.getX();
+        double directionY = mouseY - head.getY();
 
-            // Normaliser la direction pour obtenir une unité de vecteur
-            double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
-            if (magnitude > 0) {
-                directionX /= magnitude;
-                directionY /= magnitude;
-            }
-
-            // Mettre à jour la direction avec la nouvelle orientation
-            game.setDirection(directionX, directionY);
+        // Normaliser la direction pour obtenir une unité de vecteur
+        double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
+        if (magnitude > 0) {
+            directionX /= magnitude;
+            directionY /= magnitude;
         }
+
+        // Mettre à jour la direction avec la nouvelle orientation
+        game.setDirection(directionX, directionY);
     }
 
     public void handleKeyPress(KeyEvent keyEvent) {
@@ -64,7 +61,13 @@ public class SnakeController {
                 game.setDirection(1, 0);
                 break;
             case  P: // Mettre en pause ou reprendre le jeu lorsque la touche "P" est pressée
+                gamePane.drawPause();
                 game.togglePause(); break;
+            case R:
+                if(game.getgameOver()){
+                    game.reset();
+                }
+                break;
             case SPACE:
                 // Augmenter la vitesse lorsque la barre d'espace est pressée
                 game.increaseSpeed();

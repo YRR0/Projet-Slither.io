@@ -5,7 +5,7 @@ public class GameConfig {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private static final double SPEED = 0.5;
-    private static final double INC_SPEED = 2.0;
+    private static final double INC_SPEED = 1.5;
 
     private final int minIA;
     private final int maxIA;

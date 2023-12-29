@@ -1,17 +1,18 @@
 package fr.uparis.informatique.cpoo5.projet.view;
+
 import fr.uparis.informatique.cpoo5.projet.model.Food;
+import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegmentIA;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
+import javafx.scene.text.TextAlignment;
 import java.util.List;
-import fr.uparis.informatique.cpoo5.projet.model.Game;
-import javafx.scene.image.Image;
 
-// La classe qui représente le panneau de jeu
 public class GamePane extends StackPane {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
@@ -26,6 +27,7 @@ public class GamePane extends StackPane {
 
     public void render() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        if(!game.getgameOver()){
         gc.clearRect(0, 0, WIDTH, HEIGHT);
         // Définir la couleur de fond comme noir
         gc.setFill(Color.BLACK);
@@ -70,5 +72,55 @@ public class GamePane extends StackPane {
                 gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
             }
         }
+
+        drawScore(gc);
+        }
+        else{
+            drawGameOverScreen(gc);
+        }
     }
+
+    private void drawScore(GraphicsContext gc) {
+        double scoreX = WIDTH / 2;
+        double scoreY = 50;
+
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial", 50));
+
+        int snakeSize = game.getSnake().size();
+
+        gc.fillText("" + snakeSize, scoreX, scoreY);
+    }
+
+    private void drawGameOverScreen(GraphicsContext gc) {
+        // Afficher un message Game Over au centre de l'écran
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial", 40));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("Game Over", WIDTH / 2, HEIGHT / 2 - 40);
+
+        // Afficher le score
+        int snakeSize = game.getSnake().size();
+        gc.setFont(Font.font("Arial", 20));
+        gc.fillText("Taille du serpent : " + snakeSize, WIDTH / 2, HEIGHT / 2);
+
+        // Ajouter un message pour recommencer la partie
+        gc.setFont(Font.font("Arial", 16));
+        gc.fillText("Appuyez sur R pour recommencer", WIDTH / 2, HEIGHT / 2 + 40);
+    }
+
+    public void drawPause() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Dessiner un fond semi-transparent
+        gc.setFill(Color.rgb(0, 0, 0, 0.5));
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
+
+        // Afficher le texte de pause
+        gc.setFill(Color.WHITE);
+        gc.setFont(new Font("Arial", 40));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("Pause", WIDTH / 2, HEIGHT / 2);
+    }
+
 }
