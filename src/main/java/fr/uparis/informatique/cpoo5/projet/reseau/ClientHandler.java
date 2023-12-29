@@ -6,14 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 public class ClientHandler implements Runnable {
-    private Serveur serveur;
+    private Server serveur;
     private Socket clientSocket;
     private Game game;
     private int playerId;
     private BufferedReader input;
     private PrintWriter output;
 
-    public ClientHandler(Serveur s, Socket clientSocket, Game game) {
+    public ClientHandler(Server s, Socket clientSocket, Game game) {
         this.clientSocket = clientSocket;
         this.game = game;
         this.serveur = s;
@@ -49,5 +49,18 @@ public class ClientHandler implements Runnable {
 
     public void sendMessage(String message) {
         output.println(message);
+    }
+
+    public void sendGame(byte[] gameBytes) {
+        try {
+            // Envoyer la taille du tableau d'octets au client
+            output.println("GAME_SIZE " + gameBytes.length);
+
+            // Envoyer le tableau d'octets au client
+            clientSocket.getOutputStream().write(gameBytes);
+            clientSocket.getOutputStream().flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

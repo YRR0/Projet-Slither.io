@@ -12,8 +12,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import fr.uparis.informatique.cpoo5.projet.reseau.SnakeGameClient;
 
-import java.net.ConnectException;
-
 public class SnakeGame extends Application {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
@@ -24,23 +22,25 @@ public class SnakeGame extends Application {
     @Override
     public void start(Stage primaryStage) {
         //Game game = new Game();
-        Game game = ServerLauncher.game;
 
-        // Créer le client réseau
-        SnakeGameClient gameClient = new SnakeGameClient(game);
+        Game game = SharedGameService.getGameInstance();
 
-        GamePane gamePane = new GamePane(game);
-        SnakeController gameController = new SnakeController(game, gamePane);
+        synchronized (game) {
+            SnakeGameClient gameClient = new SnakeGameClient(game);
 
-        try {
-            initializeSnakeGame(primaryStage, WIDTH, HEIGHT, gamePane, gameController);
-            gameController.setGameClient(gameClient);
-        } catch (ConnectException e) {
-            // Gérer l'exception de connexion refusée ici
-            System.out.println("Erreur de connexion au serveur. Assurez-vous que le serveur est en cours d'exécution.");
-            return;
+            GamePane gamePane = new GamePane(game);
+            SnakeController gameController = new SnakeController(game, gamePane);
+
+            try {
+                initializeSnakeGame(primaryStage, WIDTH, HEIGHT, gamePane, gameController);
+                gameController.setGameClient(gameClient);
+            } catch (ConnectException e) {
+                // Gérer l'exception de connexion refusée ici
+                System.out.println("Erreur de connexion au serveur. Assurez-vous que le serveur est en cours d'exécution.");
+                return;
+            }
+            startGameLoop(game, gameController, gameClient);
         }
-        startGameLoop(game, gameController, gameClient);
     }
 
     public static void initializeSnakeGame(Stage primaryStage, int width, int height,GamePane gamePane, SnakeController gameController) throws ConnectException {

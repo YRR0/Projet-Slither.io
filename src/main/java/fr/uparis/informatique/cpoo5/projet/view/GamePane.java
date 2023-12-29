@@ -80,6 +80,7 @@ public class GamePane extends StackPane {
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
         // Trouver le serpent du joueur
+
         List<SnakeSegment> playerSnake = game.getSnake();
         if (playerSnake != null && !playerSnake.isEmpty()) {
             // Calculer le décalage pour centrer la vue sur le joueur
@@ -137,8 +138,6 @@ public class GamePane extends StackPane {
                     }
                 }
             }
-
-
         }
         else{
           //  System.out.println("NUll game Pane");

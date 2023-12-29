@@ -3,7 +3,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
-    public class SnakeGameClient {
+import java.io.ObjectInputStream;
+import java.io.ByteArrayInputStream;
+
+public class SnakeGameClient {
         private Socket socket;
         private PrintWriter output;
         private Game game;
@@ -18,6 +21,10 @@ import fr.uparis.informatique.cpoo5.projet.model.Game;
             }
         }
 
+        public Game getGame(){
+            return this.game;
+        }
+
         public void sendPlayerInfo() {
             double directionX = game.getSnake().get(0).getX();
             double directionY = game.getSnake().get(0).getY();
@@ -25,5 +32,19 @@ import fr.uparis.informatique.cpoo5.projet.model.Game;
             output.println(message);
             System.out.println("Sent message to server: " + message);
 
+        }
+
+        public void receiveGame(byte[] gameBytes) {
+            try {
+                ByteArrayInputStream bais = new ByteArrayInputStream(gameBytes);
+                ObjectInputStream ois = new ObjectInputStream(bais);
+
+                Game receivedGame = (Game) ois.readObject();
+
+                // Update your local game state with the receivedGame
+                game.updateGameState(receivedGame);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 }

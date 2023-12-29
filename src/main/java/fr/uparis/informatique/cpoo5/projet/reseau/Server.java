@@ -5,15 +5,22 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayOutputStream;
 
-public class Serveur implements Runnable {
+public class Server implements Runnable {
     private int playerIdCounter = 1;
-    private final int PORT = 12345;
+    private static final int PORT = 12345;
     private ServerSocket serverSocket;
     private List<ClientHandler> clients = new ArrayList<>();
     private Game game;
 
-    public Serveur(Game game) {
+    // Création d'un ThreadPool avec une taille fixe (par exemple, 10 threads)
+    private ExecutorService threadPool = Executors.newFixedThreadPool(10);
+
+    public Server(Game game) {
         this.game = game;
         try {
             serverSocket = new ServerSocket(PORT);
@@ -38,10 +45,14 @@ public class Serveur implements Runnable {
 
                 synchronized (game) {
                     clientHandler.assignUniqueSnake();
+                    broadcastGame();
                 }
+
+                System.out.println("Taille de notre Liste : " + game.getAllSnakes().size());
                 playerIdCounter++;
 
                 //new Thread(clientHandler).start();
+                threadPool.execute(clientHandler);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -54,7 +65,28 @@ public class Serveur implements Runnable {
         }
     }
 
+    public Game getServerGame(){
+        return this.game;
+    }
+
     public  int getServeurId(){
         return this.playerIdCounter;
+    }
+
+    public void broadcastGame() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+            oos.writeObject(game);
+
+            byte[] gameBytes = baos.toByteArray();
+
+            for (ClientHandler client : clients) {
+                client.sendGame(gameBytes);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

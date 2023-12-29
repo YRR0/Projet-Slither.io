@@ -9,13 +9,13 @@ import javafx.scene.input.KeyEvent;
 
 import java.util.List;
 
-
 public class SnakeController {
     private Game game;
     private GamePane gamePane;
 
     private SnakeGameClient gameClient;
     public SnakeController(Game game, GamePane gamePane) {
+        //this.game = gameClient.getGame();
         this.game = game;
         this.gamePane = gamePane;
     }
@@ -79,7 +79,8 @@ public class SnakeController {
                 gameClient.sendPlayerInfo();
                 break;
             case  P: // Mettre en pause ou reprendre le jeu lorsque la touche "P" est pressée
-                game.togglePause(); break;
+                //game.togglePause();
+                // break;
             case SPACE:
                 // Augmenter la vitesse lorsque la barre d'espace est pressée
                 game.increaseSpeed();

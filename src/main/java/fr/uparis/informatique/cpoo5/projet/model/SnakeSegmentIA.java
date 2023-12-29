@@ -4,8 +4,7 @@ public class SnakeSegmentIA extends SnakeSegment {
     private double directionX;
     private double directionY;
     private int countdown;
-    
-    
+
     public SnakeSegmentIA(double x, double y) {
         super(x, y);
         double randAngle = Math.toRadians(randomGenerator(0, 360));

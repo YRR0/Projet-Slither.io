@@ -3,12 +3,14 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.Gson;
 
-public class Game {
+public class Game  implements Serializable {
     private int id ;
     private static  double WIDTH ;
     private static  double HEIGHT ;
@@ -71,7 +73,7 @@ public class Game {
         return (int)(Math.random() * range) + min;
     }
 
-    public void update() {
+    public synchronized void update() {
         for (int playerId : playerSnakes.keySet()) {
                 List<SnakeSegment> playerSnake = playerSnakes.get(playerId);
                // System.out.println("index "+id);
@@ -99,7 +101,7 @@ public class Game {
                    // System.out.println(" Liste vide imossible d'update ");
                 }
         }
-
+        System.out.println("Taille de notre Liste : " + playerSnakes.size());
     }
 
     private void grow(double newX, double newY, List<SnakeSegment> snake){
@@ -219,33 +221,33 @@ public class Game {
     }
 
     // Attribuer un serpent à un joueur lorsqu'il se connecte
-    public void assignSnakeToPlayer(int playerId) {
+    public synchronized void assignSnakeToPlayer(int playerId) {
         System.out.println("Assignation Id : " + playerId);
         id = playerId;
-        playerSnakes.put(id, snake);
         snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
-        if(playerSnakes.containsKey(id)){
+        synchronized (playerSnakes) {
+            playerSnakes.put(id, snake);
+            if (playerSnakes.containsKey(id)) {
                 System.out.println("Assignation ok" + id);
-        }
-        else {
-            System.out.println("Assignation pas ok");
+            } else {
+                System.out.println("Assignation pas ok");
+            }
         }
     }
 
-    public List<SnakeSegment> getSnake() {
+    public synchronized List<SnakeSegment> getSnake() {
         //return snake;
         synchronized (playerSnakes) {
-            if (playerSnakes != null) {
-                List<SnakeSegment> snakeList = playerSnakes.get(id);
-                if (playerSnakes.get(id) == null) {
-                    System.out.println("Pas Ok " + id);
-                    snakeList = new ArrayList<>();
-                    playerSnakes.put(id, snakeList);
-                    snakeList.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
-                }
-                return playerSnakes.get(this.id);
+            List<SnakeSegment> snakeList = playerSnakes.get(id);
+            if (snakeList == null) {
+                System.out.println("Pas Ok " + id);
+
+                snakeList = new ArrayList<>();
+                snakeList.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
+
+                playerSnakes.put(id, snakeList);
             }
-            return null;
+            return snakeList;
         }
     }
 
@@ -361,4 +363,27 @@ public class Game {
     }
 
     // Quitter la partie si c'est gameOver à rajouter
+
+    public String serialize() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    public static Game deserialize(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, Game.class);
+    }
+
+    public void updateGameState(Game receivedGame) {
+        // Mise à jour des attributs avec les valeurs reçues
+        this.paused = receivedGame.paused;
+        this.speed = receivedGame.speed;
+        this.foodList = new ArrayList<>(receivedGame.foodList);  // Copie de la liste de nourriture
+        this.snake = new ArrayList<>(receivedGame.snake);        // Copie du serpent du joueur
+        this.playerSnakes = new HashMap<>(receivedGame.playerSnakes);  // Copie de la carte des serpents des joueurs
+        this.snakeIA = new ArrayList<>(receivedGame.snakeIA);   // Copie de la liste des serpents IA
+        this.directionX = receivedGame.directionX;
+        this.directionY = receivedGame.directionY;
+        this.gameConfig = receivedGame.gameConfig;
+    }
 }
