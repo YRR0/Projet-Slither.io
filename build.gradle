@@ -70,19 +70,3 @@ task jsondemo(type: JavaExec) {
 application {
     mainClass = 'fr.uparis.informatique.cpoo5.projet.SnakeGame'
 }
-
-task runServer(type: JavaExec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run the Snake Game Server"
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'fr.uparis.informatique.cpoo5.projet.reseau.ServerLauncher'
-}
-
-task runClient(type: JavaExec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run the Snake Game Client"
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'fr.uparis.informatique.cpoo5.projet.SnakeGame'
-}

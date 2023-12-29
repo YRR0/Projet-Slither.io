@@ -1,26 +1,14 @@
 package fr.uparis.informatique.cpoo5.projet.model;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gson.Gson;
 
-public class Game  implements Serializable {
-    private int id ;
-    private static  double WIDTH ;
-    private static  double HEIGHT ;
-
+public class Game {
     private boolean paused = false;
     private boolean speed;
     private List<Food> foodList = new ArrayList<>(); //Pour stocker tous les aliments de la map
     private List<SnakeSegment> snake = new ArrayList<>();
-    private Map<Integer, List<SnakeSegment>> playerSnakes = new HashMap<>();
-
     private List<List<SnakeSegmentIA>> snakeIA = new ArrayList<>();
     private SnakeIAController iaController;
     private double directionX = 1;
@@ -28,22 +16,11 @@ public class Game  implements Serializable {
     private GameConfig gameConfig;
 
     public Game() {
-        initializeDimensions();
         this.gameConfig = new GameConfig();
-
-        // Pour la création du reseau on ne crée le serpent que quand le joueur se connecte
-        //snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
+        snake.add(new SnakeSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
         generateIA();
         generateAllFood();
         iaController = new SnakeIAController(this);
-    }
-
-    private void initializeDimensions() {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-
-        WIDTH = screenSize.getWidth();
-        HEIGHT = screenSize.getHeight();
     }
 
     //Pour générer plusieurs aliments et les stocker
@@ -60,8 +37,8 @@ public class Game  implements Serializable {
         int randPosY;
         List<SnakeSegmentIA> ia;
         for(int i = 0; i<nbrIA; ++i){
-            randPosX = randomGenerator(0, (int)WIDTH);
-            randPosY = randomGenerator(0, (int)HEIGHT);
+            randPosX = randomGenerator(0, (int)gameConfig.getWidth());
+            randPosY = randomGenerator(0, (int)gameConfig.getHeight());
             ia = new ArrayList<>();
             ia.add(new SnakeSegmentIA(randPosX, randPosY));
             snakeIA.add(ia);
@@ -73,52 +50,57 @@ public class Game  implements Serializable {
         return (int)(Math.random() * range) + min;
     }
 
-    public synchronized void update() {
-        for (int playerId : playerSnakes.keySet()) {
-                List<SnakeSegment> playerSnake = playerSnakes.get(playerId);
-               // System.out.println("index "+id);
-                if(playerSnake != null && !playerSnake.isEmpty()) {
-                    SnakeSegment head = playerSnake.get(0);
+    public void update() {
+        SnakeSegment head = snake.get(0);
 
-                    double newX = head.getX() + directionX * (speed ? gameConfig.getIncSpeed() : 1);
-                    double newY = head.getY() + directionY * (speed ? gameConfig.getIncSpeed() : 1);
+        double newX = head.getX() + directionX * (speed ? gameConfig.getIncSpeed() : 1);
+        double newY = head.getY() + directionY * (speed ? gameConfig.getIncSpeed() : 1);
 
-                    // Vérifier la collision avec le corps du serpent
-                    if (checkSelfCollision(newX, newY)) {
-                        //this.setPaused(true);
-                        //snake.clear();
-                    } else {
-                        // Si aucune collision avec le corps, continuer normalement
-                        grow(newX, newY, playerSnake);
-                        updateIA();
-                    }
-
-                    if (checkCollisionWithIA()) {
-                        //this.setPaused(true);
-                    }
-                }
-                else{
-                   // System.out.println(" Liste vide imossible d'update ");
-                }
+        // Vérifier la collision avec le corps du serpent
+        if (checkSelfCollision(newX, newY)) {
+            // Gérer la collision ici (par exemple, redémarrer le jeu, afficher un message, etc.)
+            // Dans cet exemple, on réinitialise simplement le serpent et la nourriture
+            this.setPaused(true);
+            //snake.clear();
+            //snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
+            //foodList.clear();
+            //generateAllFood();
         }
-        System.out.println("Taille de notre Liste : " + playerSnakes.size());
+        else {
+            // Si aucune collision avec le corps, continuer normalement
+            grow(newX, newY, snake);
+            updateIA();
+        }
+
+        if (checkCollisionWithIA()) {
+            // Gérer la collision avec une IA
+            //this.setPaused(true);
+            //snakeIA.clear();
+        }
+
     }
 
     private void grow(double newX, double newY, List<SnakeSegment> snake){
+        // Utiliser une copie de la liste de nourriture pour éviter les ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList);
 
         int totalFoodSize = 0;
-         for (Food food : foodCopy) {
+
+        // Calculer la taille totale de la nourriture que le serpent va manger
+        for (Food food : foodCopy) {
             if (isCollidingWithFood(food, snake.get(0))) {
                 totalFoodSize += food.getSize();
+                // Retirer la nourriture de la liste
                 foodList.remove(food);
             }
         }
 
+        // Augmenter la taille du serpent en fonction de la taille totale de la nourriture
         for (int i = 0; i < totalFoodSize; ++i) {
             snake.add(0, new SnakeSegment(newX, newY));
         }
 
+        // Supprimer le dernier segment du serpent s'il n'a pas mangé de nourriture
         snake.remove(snake.size() - 1);
         snake.add(0, new SnakeSegment(newX, newY));
     }
@@ -145,16 +127,16 @@ public class Game  implements Serializable {
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
-        double offsetX =WIDTH / 2 - head.getX();
-        double offsetY = HEIGHT / 2 - head.getY();
+        double offsetX = gameConfig.getWidth() / 2 - head.getX();
+        double offsetY = gameConfig.getHeight() / 2 - head.getY();
 
         // Normaliser les coordonnées de la nourriture après ajustement
-        double normalizedFoodX = (f.getX() + offsetX + WIDTH) % WIDTH;
-        double normalizedFoodY = (f.getY() + offsetY + HEIGHT) % HEIGHT;
+        double normalizedFoodX = (f.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
+        double normalizedFoodY = (f.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
         // Normaliser les coordonnées de la tête après ajustement
-        double normalizedHeadX = (head.getX() + offsetX +WIDTH) % WIDTH;
-        double normalizedHeadY = (head.getY() + offsetY + HEIGHT) % HEIGHT;
+        double normalizedHeadX = (head.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
+        double normalizedHeadY = (head.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
         // Vérifier la collision avec la zone de la nourriture
         return normalizedHeadX < normalizedFoodX + f.getSize() &&
@@ -164,11 +146,14 @@ public class Game  implements Serializable {
     }
 
     private boolean checkSelfCollision(double newX, double newY) {
-        for (int i = 1; i < playerSnakes.get(id).size() ; i++) {
-            SnakeSegment segment = playerSnakes.get(id).get(i);
+        // Vérifier la collision avec le propre corps du serpent
+        for (int i = 1; i < snake.size(); i++) {
+            SnakeSegment segment = snake.get(i);
 
+            // Calculer la distance euclidienne entre la nouvelle position et le segment du serpent
             double distance = Math.hypot(newX - segment.getX(), newY - segment.getY());
 
+            // Comparer la distance avec une marge d'erreur
             double collisionMargin = 0.5;
             if (distance < collisionMargin) {
                 System.out.println("Collision avec le corps du serpent détectée. newX: "+newX+ " newY: "+newY+"   " + segment.getX() +" "+ segment.getX()+ "\n");
@@ -179,20 +164,26 @@ public class Game  implements Serializable {
     }
 
     private boolean checkCollisionWithIA() {
-        SnakeSegment head = playerSnakes.get(id).get(0);
+        // Récupérer la tête du serpent du joueur
+        SnakeSegment head = snake.get(0);
 
-        double offsetX = WIDTH / 2 - head.getX();
-        double offsetY = HEIGHT / 2 - head.getY();
+        // Calculer la différence pour centrer la vue
+        double offsetX = gameConfig.getWidth() / 2 - head.getX();
+        double offsetY = gameConfig.getHeight() / 2 - head.getY();
 
-        double normalizedHeadX = (head.getX() + offsetX + WIDTH) % WIDTH ;
-        double normalizedHeadY = (head.getY() + offsetY + HEIGHT) %HEIGHT;
+        // Normaliser les coordonnées de la tête après ajustement
+        double normalizedHeadX = (head.getX() + offsetX + gameConfig.getWidth() ) % gameConfig.getWidth() ;
+        double normalizedHeadY = (head.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
+        // Parcourir toutes les IA pour vérifier la collision avec leur tête
         for (List<SnakeSegmentIA> ia : snakeIA) {
             SnakeSegmentIA iaHead = ia.get(0);
 
-            double normalizedIAHeadX = (iaHead.getX() + offsetX + WIDTH ) % HEIGHT ;
-            double normalizedIAHeadY = (iaHead.getY() + offsetY + WIDTH) % HEIGHT;
+            // Normaliser les coordonnées de la tête de l'IA après ajustement
+            double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth() ) % gameConfig.getWidth() ;
+            double normalizedIAHeadY = (iaHead.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
+            // Vérifier la collision avec la tête de l'IA
             if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
                     normalizedHeadX + SnakeSegment.SIZE > normalizedIAHeadX &&
                     normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
@@ -203,60 +194,37 @@ public class Game  implements Serializable {
                 return true;
             }
         }
+        // Aucune collision avec les IA
         return false;
     }
 
     private void convertIAToFood(List<SnakeSegmentIA> ia) {
+        // Convertir chaque segment de l'IA en une Food
         for (SnakeSegmentIA segmentIA : ia) {
             double x = segmentIA.getX();
             double y = segmentIA.getY();
 
+            // Créer une nouvelle Food à la position de l'ancien segment de l'IA
             Food newFood = new Food(x, y, segmentIA.getColor());
+            // Ajouter la nouvelle Food à la liste des Food en fesant en sorte que cela n'affecte pas la liste de nourriture à ajouter
             newFood.setDead_Food(true);
 
             foodList.add(newFood);
+
         }
+
+        // Retirer l'IA de la liste des IA, elle va réapparaître autre part
         snakeIA.remove(ia);
+        // Générer une nouvelle IA à un emplacement aléatoire
         generateIA();
     }
 
-    // Attribuer un serpent à un joueur lorsqu'il se connecte
-    public synchronized void assignSnakeToPlayer(int playerId) {
-        System.out.println("Assignation Id : " + playerId);
-        id = playerId;
-        snake.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
-        synchronized (playerSnakes) {
-            playerSnakes.put(id, snake);
-            if (playerSnakes.containsKey(id)) {
-                System.out.println("Assignation ok" + id);
-            } else {
-                System.out.println("Assignation pas ok");
-            }
-        }
-    }
-
-    public synchronized List<SnakeSegment> getSnake() {
-        //return snake;
-        synchronized (playerSnakes) {
-            List<SnakeSegment> snakeList = playerSnakes.get(id);
-            if (snakeList == null) {
-                System.out.println("Pas Ok " + id);
-
-                snakeList = new ArrayList<>();
-                snakeList.add(new SnakeSegment(WIDTH / 2, HEIGHT / 2));
-
-                playerSnakes.put(id, snakeList);
-            }
-            return snakeList;
-        }
+    public List<SnakeSegment> getSnake() {
+        return snake;
     }
 
     public List<List<SnakeSegmentIA>> getIA(){
         return snakeIA;
-    }
-
-    public Map<Integer, List<SnakeSegment>>  getAllSnakes() {
-        return playerSnakes;
     }
 
     public double getSpeed(){
@@ -269,9 +237,10 @@ public class Game  implements Serializable {
     }
 
     private void generateFood() {
-        double x = Math.random() * WIDTH;
-        double y = Math.random() * HEIGHT;
+        double x = Math.random() * gameConfig.getWidth() ;
+        double y = Math.random() * gameConfig.getHeight();
 
+        //On ajoute à chaque fois dans la liste
         RandomColorFactory f = new RandomColorFactory();
         f.generateColor();
         foodList.add(new Food(x, y,f.generateColor()));
@@ -282,11 +251,11 @@ public class Game  implements Serializable {
     }
 
     public boolean PlayerIsTooBig(){
-        return playerSnakes.get(id).size() > 200;
+        return snake.size() > 200;
     }
 
     private boolean isCloseToPlayer(List<SnakeSegmentIA> ia){
-        SnakeSegment head = playerSnakes.get(id).get(0);
+        SnakeSegment head = snake.get(0);
 
         // On calcule les distances entre IA et le joueur
         double distanceToPlayerX = head.getX() - ia.get(0).getX();
@@ -296,8 +265,8 @@ public class Game  implements Serializable {
         double sq1 = Math.pow(distanceToPlayerX, 2);
 
         // On prend en compte l'offset
-        double offsetX = WIDTH/ 2 - head.getX();
-        double offsetY = HEIGHT / 2 - head.getY();
+        double offsetX = gameConfig.getWidth() / 2 - head.getX();
+        double offsetY = gameConfig.getHeight() / 2 - head.getY();
 
         // On met à jour les distances avec l'offset
         double distanceToPlayerWithOffsetX = distanceToPlayerX + offsetX;
@@ -306,16 +275,18 @@ public class Game  implements Serializable {
         // Théorème de Pythagore pour la distance avec l'offset
         double sumWithOffset = Math.pow(distanceToPlayerWithOffsetX, 2) + Math.pow(distanceToPlayerWithOffsetY, 2);
 
-        // Si le joueur est à moins de 500 pixels, l'IA va vers le joueur
+        // Si le joueur est à moins de 250 pixels, l'IA va vers le joueur
         return Math.sqrt(sumWithOffset) < 500;
     }
 
     private void updateIA(){
         for (List<SnakeSegmentIA> ia : this.snakeIA) {
+            //On vérifie si une IA est proche
             if(isCloseToPlayer(ia)){
                 //Dans ce cas là on applique la stratégie kill
                 iaController.moveIaKillStrat(ia);
             }
+            //Si le joueur dépasse une certaine taille
             else if(PlayerIsTooBig()){
                 iaController.moveIaKillStrat(ia);
             }
@@ -323,19 +294,16 @@ public class Game  implements Serializable {
                 //Sinon on applique la stratégie food
                 iaController.moveIaFoodStrat(ia);
             }
+            //On applique les collisions avec la nourriture
             growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
         }
     }
 
-    public int getPlayerId(){
-        return this.id;
-    }
-
     public double getWidth() {
-        return WIDTH;
+        return gameConfig.getWidth();
     }
     public double getHeight() {
-        return HEIGHT;
+        return gameConfig.getHeight();
     }
 
     public void increaseSpeed() {
@@ -356,34 +324,5 @@ public class Game  implements Serializable {
 
     public void togglePause() {
         setPaused(isPaused());
-    }
-
-    public Map<Integer, List<SnakeSegment>> getPlayerSnakes() {
-        return this.playerSnakes;
-    }
-
-    // Quitter la partie si c'est gameOver à rajouter
-
-    public String serialize() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
-    public static Game deserialize(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, Game.class);
-    }
-
-    public void updateGameState(Game receivedGame) {
-        // Mise à jour des attributs avec les valeurs reçues
-        this.paused = receivedGame.paused;
-        this.speed = receivedGame.speed;
-        this.foodList = new ArrayList<>(receivedGame.foodList);  // Copie de la liste de nourriture
-        this.snake = new ArrayList<>(receivedGame.snake);        // Copie du serpent du joueur
-        this.playerSnakes = new HashMap<>(receivedGame.playerSnakes);  // Copie de la carte des serpents des joueurs
-        this.snakeIA = new ArrayList<>(receivedGame.snakeIA);   // Copie de la liste des serpents IA
-        this.directionX = receivedGame.directionX;
-        this.directionY = receivedGame.directionY;
-        this.gameConfig = receivedGame.gameConfig;
     }
 }
