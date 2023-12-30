@@ -3,7 +3,6 @@ package fr.uparis.informatique.cpoo5.projet.view;
 import fr.uparis.informatique.cpoo5.projet.model.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
-import fr.uparis.informatique.cpoo5.projet.model.SnakeSegmentIA;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -63,8 +62,8 @@ public class GamePane extends StackPane {
         }
 
         // Dessiner les IA
-        for (List<SnakeSegmentIA> ia : game.getIA()) {
-            for (SnakeSegmentIA segment : ia) {
+        for (List<SnakeSegment> ia : game.getIA()) {
+            for (SnakeSegment segment : ia) {
                 double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
                 double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 

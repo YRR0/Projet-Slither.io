@@ -7,6 +7,7 @@ public class Food {
     private boolean snakeDead;
     private double x;  // La coordonnée x de l'aliment
     private double y;  // La coordonnée y de l'aliment
+    private Power power;
 
     // une couleur pour la nourriture
     private Color color;
@@ -39,5 +40,13 @@ public class Food {
 
     public double getSize(){
         return this.size;
+    }
+
+    public void setFoodBehavior(Power power) {
+        this.power = power;
+    }
+
+    public Power getPower(){
+        return this.power;
     }
 }

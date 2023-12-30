@@ -4,7 +4,6 @@ import java.util.List;
 import fr.uparis.informatique.cpoo5.projet.model.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
-import fr.uparis.informatique.cpoo5.projet.model.SnakeSegmentIA;
 
 public class SnakeIAController {
     
@@ -14,7 +13,7 @@ public class SnakeIAController {
         this.game = game;
     }
 
-    private Food closestFood(SnakeSegmentIA head) {
+    private Food closestFood(SnakeSegment head) {
         //On prend comme min la valeur max de double pour être sûr
         double distMin = Double.MAX_VALUE;
         Food closest = null;
@@ -33,8 +32,8 @@ public class SnakeIAController {
         return closest;
     }
 
-    public void moveIaFoodStrat(List<SnakeSegmentIA> ia) {
-        SnakeSegmentIA head = ia.get(0);
+    public void moveIaFoodStrat(List<SnakeSegment> ia) {
+        SnakeSegment head = ia.get(0);
         //On récupère la nourriture la plus proche        
         Food closestFood = closestFood(head);
         //On calcule leur distance
@@ -52,7 +51,7 @@ public class SnakeIAController {
         ia.get(0).setY(newY);
     }
 
-    public void moveIaKillStrat(List<SnakeSegmentIA> ia) {
+    public void moveIaKillStrat(List<SnakeSegment> ia) {
         SnakeSegment head = game.getSnake().get(0);
         //On calcule la différence entre les coordonnées du snake et des IA 
         double distanceToPlayerX = head.getX() - ia.get(0).getX();
