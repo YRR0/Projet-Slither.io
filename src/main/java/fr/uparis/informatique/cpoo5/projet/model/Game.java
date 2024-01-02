@@ -319,6 +319,9 @@ public class Game {
         }
     }
 
+    public double getDirectionX(){return this.directionX;}
+
+
     public double getWidth() {
         return gameConfig.getWidth();
     }
@@ -371,4 +374,7 @@ public class Game {
         directionY = 0;
     }
 
+    public double getDirectionY() {
+        return this.directionY;
+    }
 }
