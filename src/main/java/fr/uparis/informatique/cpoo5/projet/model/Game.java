@@ -2,12 +2,8 @@ package fr.uparis.informatique.cpoo5.projet.model;
 
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
-import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javafx.scene.paint.Color;
 
 public class Game {
     private boolean paused = false;
@@ -20,6 +16,8 @@ public class Game {
     private GameConfig gameConfig;
     private double directionX = 1;
     private double directionY = 0;
+
+    private boolean recentPower;
 
     public Game() {
         this.gameConfig = new GameConfig();
@@ -73,24 +71,39 @@ public class Game {
                     + directionY * (speed ? gameConfig.getIncSpeed() : GameConfig.getSPEED());
 
             // Vérifier la collision avec le corps du serpent
-            if (checkSelfCollision(newX, newY)) {
-                this.setPaused(true);
-                gameOver = true;
+            if (checkSelfCollision(newX, newY) || checkCollisionWithIA()) {
+                if(snake.hasPower() && checkCollisionWithIA()) {
+                    System.out.println("Cond 0");
+
+                    snakeIA.clear();
+                    generateIA();
+                    snake.removePower();
+                }
+                else if (!snake.hasPower()) {
+                   System.out.println("Cond 1");
+                    gameOver = true;
+                }
+                else{
+                    snake.removePower();
+                }
             } else {
+                // Si aucune collision avec le corps du serpent n'est détectée, faire croître le serpent et mettre à jour l'IA
                 grow(newX, newY, snake);
-                // detection de l'IA avec le coprs d'un joueur
-                if (!checkIACollisionWithPlayer()) {
+                if (!checkIACollisionWithPlayer() && !snake.hasPower()) {
+                    //System.out.println("Cond 2");
+                    //snakeIA.clear();
+                    //generateIA();
                     updateIA();
-                } else {
+                }
+                else if(!checkIACollisionWithPlayer()){
+                    //System.out.println("Cond 3");
+                    updateIA();
+                }
+                else if(checkIACollisionWithPlayer()){
+                    //System.out.println("Cond 4");
                     snakeIA.clear();
                     generateIA();
                 }
-            }
-
-            if (checkCollisionWithIA()) {
-                this.setPaused(true);
-                gameOver = true;
-                System.out.println("Joueur MORT");
             }
         }
     }
@@ -344,7 +357,7 @@ public class Game {
                             " Joueur: " + playerSegment.getX() + " " + playerSegment.getY() + "\n");
                     // Si l'IA possède un bouclier et que sa tête rentre en contact avec le joueur
                     if (ia.getPower() == Power.SHIELD && this.snake.getPower() != Power.WEAK) {
-                        // System.out.println("Collision mais shield IA");
+                        System.out.println("Collision mais shield IA");
                         // On retire le bouclier de l'IA
                         removeSnakePower(ia);
                         return false;
@@ -518,6 +531,7 @@ public class Game {
         // Réinitialiser les listes
         foodList.clear();
         snake.getSnakeBody().clear();
+        snake.removePower();
         snakeIA.clear();
 
         // Réinitialiser les états du jeu
