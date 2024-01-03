@@ -3,6 +3,7 @@ import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.paint.Color;
 
 public class Game {
     private boolean paused = false;
@@ -16,9 +17,10 @@ public class Game {
     private double directionY = 0;
     private GameConfig gameConfig;
 
+
     public Game() {
         this.gameConfig = new GameConfig();
-        snake.add(new SnakeSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
+        snake.add(new SnakeSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2, new RandomColorFactory().generateColor()));
         generateIA();
         generateAllFood();
         iaController = new SnakeIAController(this);
@@ -102,9 +104,10 @@ public class Game {
             snake.add(0, new SnakeSegment(newX, newY));
         }
 
+        Color a = snake.get(snake.size() - 1).getColor();
         // Supprimer le dernier segment du serpent s'il n'a pas mangé de nourriture
         snake.remove(snake.size() - 1);
-        snake.add(0, new SnakeSegment(newX, newY));
+        snake.add(0, new SnakeSegment(newX, newY,a));
     }
 
     private void growIA(double newX, double newY, List<SnakeSegmentIA> snakeIA){
@@ -176,21 +179,23 @@ public class Game {
 
         // Parcourir toutes les IA pour vérifier la collision avec leur tête
         for (List<SnakeSegmentIA> ia : snakeIA) {
-            SnakeSegmentIA iaHead = ia.get(0);
+            for(int i=0 ; i<ia.size(); i++){
+                SnakeSegmentIA iaHead = ia.get(i);
 
-            // Normaliser les coordonnées de la tête de l'IA après ajustement
-            double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth() ) % gameConfig.getWidth() ;
-            double normalizedIAHeadY = (iaHead.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+                // Normaliser les coordonnées de la tête de l'IA après ajustement
+                double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth() ) % gameConfig.getWidth() ;
+                double normalizedIAHeadY = (iaHead.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
-            // Vérifier la collision avec la tête de l'IA
-            if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
-                    normalizedHeadX + SnakeSegment.SIZE > normalizedIAHeadX &&
-                    normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
-                    normalizedHeadY + SnakeSegment.SIZE > normalizedIAHeadY) {
-                // Collision détectée
-                System.out.println("Collision IA");
-                //convertIAToFood(snakeIA.get(0));
-                return true;
+                // Vérifier la collision avec la tête de l'IA
+                if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
+                        normalizedHeadX + SnakeSegment.SIZE > normalizedIAHeadX &&
+                        normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
+                        normalizedHeadY + SnakeSegment.SIZE > normalizedIAHeadY) {
+                    // Collision détectée
+                    System.out.println("Collision IA");
+                    //convertIAToFood(snakeIA.get(0));
+                    return true;
+                }
             }
         }
         // Aucune collision avec les IA
