@@ -7,13 +7,13 @@ import java.util.List;
 
 public class Game {
     private boolean paused = false;
-    private boolean gameOver = false;
-    private boolean speed;
+    protected boolean gameOver = false;
+    protected boolean speed;
     private List<Food> foodList = new ArrayList<>(); // Pour stocker tous les aliments de la map
     private SnakeBody snake = new SnakeBody();
     private List<SnakeBody> snakeIA = new ArrayList<>();
     private SnakeIAController iaController;
-    private GameConfig gameConfig;
+    protected GameConfig gameConfig;
     private double directionX = 1;
     private double directionY = 0;
 
@@ -109,7 +109,7 @@ public class Game {
     }
 
 
-    private void grow(double newX, double newY, SnakeBody snake) {
+    protected void grow(double newX, double newY, SnakeBody snake) {
         // Utiliser une copie de la liste de nourriture pour éviter les
         // ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList);
@@ -233,7 +233,7 @@ public class Game {
                 normalizedHeadY + SnakeSegment.SIZE > normalizedFoodY;
     }
 
-    private boolean checkSelfCollision(double newX, double newY) {
+    protected boolean checkSelfCollision(double newX, double newY) {
         // Vérifier la collision avec le propre corps du serpent
         for (int i = 1; i < snake.getSnakeBody().size(); i++) {
             SnakeSegment segment = snake.getSnakeBody().get(i);

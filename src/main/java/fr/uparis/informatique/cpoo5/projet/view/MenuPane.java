@@ -11,6 +11,8 @@ public class MenuPane extends StackPane {
     private Stage primaryStage;
     private Runnable onStartGame;
 
+    private Runnable onStartMultiPlayerGame;
+
     public MenuPane(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initializeMenu();
@@ -18,6 +20,10 @@ public class MenuPane extends StackPane {
 
     public void setOnStartGame(Runnable onStartGame) {
         this.onStartGame = onStartGame;
+    }
+
+    public void setOnStartMultiPlayerGame(Runnable onStartMultiPlayerGame) {
+        this.onStartMultiPlayerGame = onStartMultiPlayerGame;
     }
 
     private void initializeMenu() {
@@ -55,6 +61,9 @@ public class MenuPane extends StackPane {
     private void handleButtonClick(String option) {
         if ("Simple Player".equals(option) && onStartGame != null) {
             onStartGame.run();
+        }
+        else if ("Two Player".equals(option) && onStartMultiPlayerGame != null) {
+            onStartMultiPlayerGame.run();
         }
     }
 }

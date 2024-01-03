@@ -1,9 +1,12 @@
 package fr.uparis.informatique.cpoo5.projet;
 
+import fr.uparis.informatique.cpoo5.projet.controller.MultiplayerController;
+import fr.uparis.informatique.cpoo5.projet.model.MultiplayerGame;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import fr.uparis.informatique.cpoo5.projet.view.MenuPane;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeController;
+import fr.uparis.informatique.cpoo5.projet.view.SplitScreenMultiplayerGamePane;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -37,12 +40,14 @@ public class SnakeGame extends Application {
         System.out.println("Showing menu...");
 
         MenuPane menuPane = new MenuPane(stage);
-        menuPane.setOnStartGame(() -> startSimplePlayerGame());
+        menuPane.setOnStartGame(this::startSimplePlayerGame);
+        menuPane.setOnStartMultiPlayerGame(this::startMultiPlayerGame);
 
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
         System.out.println("Menu displayed.");
     }
+
 
     private void startSimplePlayerGame() {
         // Initialiser le jeu et le panneau de jeu
@@ -76,4 +81,36 @@ public class SnakeGame extends Application {
         // Afficher le nouveau stage pour le jeu
         gameStage.show();
     }
+
+    private void startMultiPlayerGame() {
+        // Initialiser le jeu et le panneau de jeu
+        MultiplayerGame game = new MultiplayerGame();
+        SplitScreenMultiplayerGamePane gamePane = new SplitScreenMultiplayerGamePane(game);
+        MultiplayerController gameController = new MultiplayerController(game, gamePane);
+
+        Stage gameStage = new Stage();
+        gameStage.initStyle(StageStyle.UNDECORATED);
+        Scene gameScene = new Scene(gamePane, WIDTH, HEIGHT);
+        gameScene.setOnKeyPressed(gameController::handleKeyPress);
+        gameStage.setScene(gameScene);
+
+        primaryStage.close();
+
+        // Démarrer la boucle de jeu
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (game.isPaused()) {
+                    // Mettre à jour l'état du jeu et rendre le panneau de jeu
+                    gameController.update();
+                }
+            }
+        }.start();
+
+        // Afficher le nouveau stage pour le jeu
+        gameStage.show();
+    }
+
+
+
 }
