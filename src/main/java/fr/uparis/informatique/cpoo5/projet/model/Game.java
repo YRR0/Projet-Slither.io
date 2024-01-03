@@ -22,7 +22,9 @@ public class Game {
 
     public Game() {
         this.gameConfig = new GameConfig();
-        snake.getSnakeBody().add(new NormalSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
+        for (int j = 0; j < 30; ++j) {
+            snake.getSnakeBody().add(new NormalSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
+        }
         generateIA();
         generateAllFood();
         iaController = new SnakeIAController(this);
@@ -50,7 +52,9 @@ public class Game {
             randPosX = randomGenerator(0, (int) gameConfig.getWidth());
             randPosY = randomGenerator(0, (int) gameConfig.getHeight());
             ia = new SnakeBody();
-            ia.getSnakeBody().add(new NormalSegment(randPosX, randPosY));
+            for (int j = 0; j < 30; ++j) {
+                ia.getSnakeBody().add(new NormalSegment(randPosX, randPosY));
+            }
             snakeIA.add(ia);
         }
     }
