@@ -51,27 +51,35 @@ public class GamePane extends StackPane {
             }
 
         // Dessiner le serpent
-        for (SnakeSegment segment : game.getSnake().getSnakeBody()) {
-            double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
-            double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
-
-            // Facteur de croissance en fonction de la taille du serpent
-            double growthFactor = 1.0 + game.getSnake().getSnakeBody().size() * 0.000005;
-
-            gc.setFill(segment.getColor());
-            gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
-        }
-
-        // Dessiner les IA
-        for (SnakeBody ia : game.getIA()) {
-            for (SnakeSegment segment : ia.getSnakeBody()) {
+            int numSegments = game.getSnake().size();
+            for (int i = 0; i < numSegments; i++) {
+                SnakeSegment segment = game.getSnake().get(i);
                 double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
                 double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
-                gc.setFill(segment.getColor());
-                gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
+                Color segmentColor = getColorForSegment(i, numSegments);
+
+                double growthFactor = 1.0 + numSegments * 0.000005;
+
+                gc.setFill(segmentColor);
+                gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
             }
-        }
+
+        // Dessiner les IA
+            for (List<SnakeSegmentIA> ia : game.getIA()) {
+                int numSegmentsIA = ia.size();
+                for (int i = 0; i < numSegmentsIA; i++) {
+                    SnakeSegmentIA segmentIA = ia.get(i);
+                    double adjustedX = (segmentIA.getX() + offsetX + WIDTH) % WIDTH;
+                    double adjustedY = (segmentIA.getY() + offsetY + HEIGHT) % HEIGHT;
+
+                    // Utilisation d'une palette de couleurs en fonction de l'indice du segment
+                    Color segmentColorIA = getColorForSegment(i, numSegmentsIA);
+
+                    gc.setFill(segmentColorIA);
+                    gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
+                }
+            }
 
         drawScore(gc);
         }
@@ -108,6 +116,12 @@ public class GamePane extends StackPane {
         gc.setFont(Font.font("Arial", 16));
         gc.fillText("Appuyez sur R pour recommencer", WIDTH / 2, HEIGHT / 2 + 40);
     }
+
+    private Color getColorForSegment(int segmentIndex, int numSegments) {
+        float hue = (float) segmentIndex / numSegments;
+        return Color.hsb(hue * 360, 1.0, 1.0);
+    }
+
 
     public void drawPause() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
