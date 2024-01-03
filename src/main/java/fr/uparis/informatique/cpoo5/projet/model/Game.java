@@ -2,6 +2,8 @@ package fr.uparis.informatique.cpoo5.projet.model;
 
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,11 +85,9 @@ public class Game {
             }
 
             if (checkCollisionWithIA()) {
-                // Gérer la collision avec une IA
-                // this.setPaused(true);
-                // gameOver = true;
-                snakeIA.clear();
-                generateIA();
+                this.setPaused(true);
+                gameOver = true;
+                System.out.println("Joueur MORT");
             }
         }
     }
@@ -103,11 +103,13 @@ public class Game {
             if (isCollidingWithFood(food, snake.getSnakeBody().get(0))) {
                 totalFoodSize += food.getSize();
                 for (int i = 0; i < totalFoodSize; ++i) {
-                    // Si la nourriture mangé contenait un pouvoir && que le joueur n'en avait pas déjà un
+                    // Si la nourriture mangé contenait un pouvoir && que le joueur n'en avait pas
+                    // déjà un
                     if (food.getPower() != null && !snake.hasPower()) {
-                        addPowerToSnake(food.getPower(), snake, newX, newY);
+                        addPowerToSnake(food.getPower(), snake);
                     }
-                    //Si il a un pouvoir il le garde tant qu'il ne le perd pas peu importe la nourriture mangé
+                    // Si il a un pouvoir il le garde tant qu'il ne le perd pas peu importe la
+                    // nourriture mangé
                     else if (snake.hasPower()) {
                         SnakeSegment head = snake.getSnakeBody().get(0);
                         if (head instanceof ShieldSegment) {
@@ -123,21 +125,22 @@ public class Game {
             }
         }
 
-        //Fais avancer le serpent
+        // Fais avancer le serpent
         move(snake, newX, newY);
     }
 
     // Pour ajouter des segments spéciaux si le serpent a mangé une nourriture
     // spéciale
-    public void addPowerToSnake(Power power, SnakeBody snake, double newX, double newY) {
+    public void addPowerToSnake(Power power, SnakeBody snake) {
         snake.setPower(power);
         int snakeSize = snake.getSnakeBody().size();
-        snake.getSnakeBody().removeAll(snake.getSnakeBody());
         for (int i = 0; i < snakeSize; ++i) {
+            double newX = snake.getSnakeBody().get(i).getX();
+            double newY = snake.getSnakeBody().get(i).getY();
             if (power == Power.WEAK) {
-                snake.getSnakeBody().add(0, new WeakSegment(newX, newY));
+                snake.getSnakeBody().set(i, new WeakSegment(newX, newY));
             } else if (power == Power.SHIELD) {
-                snake.getSnakeBody().add(0, new ShieldSegment(newX, newY));
+                snake.getSnakeBody().set(i, new ShieldSegment(newX, newY));
             }
         }
     }
@@ -168,7 +171,7 @@ public class Game {
                 for (int i = 0; i < food.getSize(); ++i) {
                     if (food.getPower() != null && !snakeIA.hasPower()) {
                         System.out.println("IA food");
-                        addPowerToSnake(food.getPower(), snakeIA, newX, newY);
+                        addPowerToSnake(food.getPower(), snakeIA);
                     } else if (snakeIA.hasPower()) {
                         SnakeSegment head = snakeIA.getSnakeBody().get(0);
                         if (head instanceof ShieldSegment) {
@@ -224,6 +227,7 @@ public class Game {
         return false; // Aucune collision
     }
 
+    // Collision du joueur avec les IA
     private boolean checkCollisionWithIA() {
         // Récupérer la tête du serpent du joueur
         SnakeSegment head = snake.getSnakeBody().get(0);
@@ -236,63 +240,134 @@ public class Game {
         double normalizedHeadX = (head.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
         double normalizedHeadY = (head.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
-        // Parcourir toutes les IA pour vérifier la collision avec leur tête
+        // Parcourir toutes les IA pour vérifier la collision avec leur corps
         for (SnakeBody ia : snakeIA) {
-            SnakeSegment iaHead = ia.getSnakeBody().get(0);
+            for (SnakeSegment body : ia.getSnakeBody()) {
 
-            // Normaliser les coordonnées de la tête de l'IA après ajustement
-            double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
-            double normalizedIAHeadY = (iaHead.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+                // Normaliser les coordonnées du corps de l'IA après ajustement
+                double normalizedIAHeadX = (body.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
+                double normalizedIAHeadY = (body.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
-            // Vérifier la collision avec la tête de l'IA
-            if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
-                    normalizedHeadX + SnakeSegment.SIZE > normalizedIAHeadX &&
-                    normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
-                    normalizedHeadY + SnakeSegment.SIZE > normalizedIAHeadY) {
-                // Collision détectée
-                System.out.println("Collision IA");
-                // convertIAToFood(snakeIA.get(0));
-                return true;
+                // Vérifier la collision avec le corps de l'IA
+                if (normalizedHeadX < normalizedIAHeadX + SnakeSegment.SIZE &&
+                        normalizedHeadX + SnakeSegment.SIZE > normalizedIAHeadX &&
+                        normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
+                        normalizedHeadY + SnakeSegment.SIZE > normalizedIAHeadY) {
+
+                    // Si le joueur possède un bouclier et que sa tête rentre en collision avec une
+                    // IA et que l'IA n'a pas de segment faible
+                    if (this.snake.getPower() == Power.SHIELD && ia.getPower() != Power.WEAK) {
+                        // System.out.println("Collision mais shield joueur");
+                        // On retire le shield du joueur
+                        removeSnakePower(snake);
+                        return false;
+                    }
+                    // Si l'IA touchée par la tête du joueur a un segment faible
+                    else if (ia.getPower() == Power.WEAK) {
+                        // System.out.println("Collision mais weak joueur");
+                        // On retire la moitié des segments de l'IA
+                        applyWeakPower(ia);
+                        return false;
+                    } else {
+                        // Collision détectée
+                        // System.out.println("IA mort");
+                        return true;
+                    }
+                }
             }
         }
         // Aucune collision avec les IA
         return false;
     }
 
-    private boolean checkIACollisionWithPlayer() {
-        // Récupérer la tête de l'IA
-        SnakeSegment iaHead = snakeIA.get(0).getSnakeBody().get(0);
+    // Pour enlever le pouvoir du serpent en cas de collision ou autre
+    private void removeSnakePower(SnakeBody snake) {
+        int snakeSize = snake.getSnakeBody().size();
+        for (int i = 0; i < snakeSize; ++i) {
+            double newX = snake.getSnakeBody().get(i).getX();
+            double newY = snake.getSnakeBody().get(i).getY();
+            snake.getSnakeBody().set(i, new NormalSegment(newX, newY));
+        }
+        snake.removePower();
+    }
 
-        // Vérifier la collision avec n'importe quelle partie du corps du joueur
-        for (int i = 0; i < snake.getSnakeBody().size(); i++) {
-            SnakeSegment playerSegment = snake.getSnakeBody().get(i);
-
-            // Vérifier la collision avec la tête de l'IA
-            if (iaHead.getX() == playerSegment.getX() && iaHead.getY() == playerSegment.getY()) {
-                System.out.println("Collision de l'IA avec le corps du joueur détectée. " +
-                        "IA: " + iaHead.getX() + " " + iaHead.getY() +
-                        " Joueur: " + playerSegment.getX() + " " + playerSegment.getY() + "\n");
-                return true; // Collision détectée
+    // Quand un serpent a un segment faible et que un autre serpent rentre en
+    // collision, il perd la moitié de ses segments
+    private void applyWeakPower(SnakeBody snake) {
+        int snakeSize = snake.getSnakeBody().size();
+        if (snakeSize > 1) {
+            for (int i = 0; i < snakeSize / 2; ++i) {
+                snake.getSnakeBody().remove(i);
             }
         }
+        removeSnakePower(snake);
+    }
 
+    // Collision des IA avec le joueur
+    private boolean checkIACollisionWithPlayer() {
+        for (SnakeBody ia : snakeIA) {
+            // Récupérer la tête de l'IA
+            SnakeSegment iaHead = ia.getSnakeBody().get(0);
+
+            double offsetX = gameConfig.getWidth() / 2 - iaHead.getX();
+            double offsetY = gameConfig.getHeight() / 2 - iaHead.getY();
+
+            // Normaliser les coordonnées de la tête de l'IA après ajustement
+            double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
+            double normalizedIAHeadY = (iaHead.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
+
+            // Vérifier la collision avec n'importe quelle partie du corps du joueur
+            for (int i = 0; i < snake.getSnakeBody().size(); i++) {
+                SnakeSegment playerSegment = snake.getSnakeBody().get(i);
+
+                // Normaliser les coordonnées du segment du joueur après ajustement
+                double normalizedPlayerX = (playerSegment.getX() + offsetX + gameConfig.getWidth())
+                        % gameConfig.getWidth();
+                double normalizedPlayerY = (playerSegment.getY() + offsetY + gameConfig.getHeight())
+                        % gameConfig.getHeight();
+
+                // Vérifier la collision avec la tête de l'IA
+                if (normalizedIAHeadX < normalizedPlayerX + SnakeSegment.SIZE &&
+                        normalizedIAHeadX + SnakeSegment.SIZE > normalizedPlayerX &&
+                        normalizedIAHeadY < normalizedPlayerY + SnakeSegment.SIZE &&
+                        normalizedIAHeadY + SnakeSegment.SIZE > normalizedPlayerY) {
+                    System.out.println("Collision de l'IA avec le corps du joueur détectée. " +
+                            "IA: " + iaHead.getX() + " " + iaHead.getY() +
+                            " Joueur: " + playerSegment.getX() + " " + playerSegment.getY() + "\n");
+                    // Si l'IA possède un bouclier et que sa tête rentre en contact avec le joueur
+                    if (ia.getPower() == Power.SHIELD && this.snake.getPower() != Power.WEAK) {
+                        // System.out.println("Collision mais shield IA");
+                        // On retire le bouclier de l'IA
+                        removeSnakePower(ia);
+                        return false;
+                    }
+                    // Si par contre le joueur a un segment faible on enlève la moitié du joueur
+                    // sans retirer le pouvoir de l'IA
+                    if (this.snake.getPower() == Power.WEAK) {
+                        // System.out.println("Collision mais weak IA");
+                        applyWeakPower(this.snake);
+                        return false;
+                    } else {
+                        // Collision détectée
+                        // System.out.println("Joueur mort");
+                        // convertIAToFood(ia);
+                        return true;
+                    }
+                }
+            }
+        }
         return false; // Aucune collision
     }
 
-    private void convertIAToFood(List<SnakeSegment> ia) {
-        // Convertir chaque segment de l'IA en une Food
-        for (SnakeSegment segmentIA : ia) {
+    // Utilisation dans la méthode convertIAToFood
+    private void convertIAToFood(SnakeBody ia) {
+        for (SnakeSegment segmentIA : ia.getSnakeBody()) {
             double x = segmentIA.getX();
             double y = segmentIA.getY();
 
-            // Créer une nouvelle Food à la position de l'ancien segment de l'IA
-            Food newFood = new Food(x, y, segmentIA.getColor());
-            // Ajouter la nouvelle Food à la liste des Food en fesant en sorte que cela
-            // n'affecte pas la liste de nourriture à ajouter
-            newFood.setDead_Food(true);
+            RandomColorFactory f = new RandomColorFactory();
 
-            foodList.add(newFood);
-
+            foodList.add(new Food(x, y, f.generateColor()));
         }
 
         // Retirer l'IA de la liste des IA, elle va réapparaître autre part
@@ -318,7 +393,6 @@ public class Game {
         double y = Math.random() * gameConfig.getHeight();
 
         RandomColorFactory f = new RandomColorFactory();
-        f.generateColor();
 
         // 20% de chance d'avoir un pouvoir
         boolean hasPower = Math.random() < 0.2;
@@ -375,7 +449,7 @@ public class Game {
         double sumWithOffset = Math.pow(distanceToPlayerWithOffsetX, 2) + Math.pow(distanceToPlayerWithOffsetY, 2);
 
         // Si le joueur est à moins de 250 pixels, l'IA va vers le joueur
-        return Math.sqrt(sumWithOffset) < 500;
+        return Math.sqrt(sumWithOffset) < 250;
     }
 
     private void updateIA() {
