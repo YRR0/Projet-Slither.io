@@ -25,7 +25,7 @@ public class SnakeController {
 
     // Méthode pour bien controler le jeu
     public void handleMouseMove(javafx.scene.input.MouseEvent mouseEvent) {
-        SnakeSegment head = game.getSnake().get(0);
+        SnakeSegment head = game.getSnake().getSnakeBody().get(0);
         // Utiliser directement les coordonnées x et y de la souris
         double mouseX = mouseEvent.getX();
         double mouseY = mouseEvent.getY();

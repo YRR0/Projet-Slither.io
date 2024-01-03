@@ -6,6 +6,10 @@ public class NormalSegment extends SnakeSegment {
     public NormalSegment(double x, double y) {
         super(x,y, Color.BLUE);
     }
+
+    public NormalSegment(double x, double y,Color a) {
+        super(x,y,a);
+    }
 }
 
     

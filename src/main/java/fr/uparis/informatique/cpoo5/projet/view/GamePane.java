@@ -51,9 +51,9 @@ public class GamePane extends StackPane {
             }
 
         // Dessiner le serpent
-            int numSegments = game.getSnake().size();
+            int numSegments = game.getSnake().getSnakeBody().size();
             for (int i = 0; i < numSegments; i++) {
-                SnakeSegment segment = game.getSnake().get(i);
+                SnakeSegment segment = game.getSnake().getSnakeBody().get(i);
                 double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
                 double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
@@ -66,10 +66,10 @@ public class GamePane extends StackPane {
             }
 
         // Dessiner les IA
-            for (List<SnakeSegmentIA> ia : game.getIA()) {
-                int numSegmentsIA = ia.size();
+            for (SnakeBody ia : game.getIA()) {
+                int numSegmentsIA = ia.getSnakeBody().size();
                 for (int i = 0; i < numSegmentsIA; i++) {
-                    SnakeSegmentIA segmentIA = ia.get(i);
+                    SnakeSegment segmentIA = ia.getSnakeBody().get(i);
                     double adjustedX = (segmentIA.getX() + offsetX + WIDTH) % WIDTH;
                     double adjustedY = (segmentIA.getY() + offsetY + HEIGHT) % HEIGHT;
 
@@ -81,7 +81,7 @@ public class GamePane extends StackPane {
                 }
             }
 
-        drawScore(gc);
+            drawScore(gc);
         }
         else{
             drawGameOverScreen(gc);
