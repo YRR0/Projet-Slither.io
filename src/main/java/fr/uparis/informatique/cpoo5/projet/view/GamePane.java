@@ -52,8 +52,10 @@ public class GamePane extends StackPane {
 
         // Dessiner le serpent
             int numSegments = game.getSnake().getSnakeBody().size();
+            SnakeBody body = game.getSnake();
+            List<SnakeSegment> snake = game.getSnake().getSnakeBody();
             for (int i = 0; i < numSegments; i++) {
-                SnakeSegment segment = game.getSnake().getSnakeBody().get(i);
+                SnakeSegment segment = snake.get(i);
                 double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
                 double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
@@ -61,7 +63,12 @@ public class GamePane extends StackPane {
 
                 double growthFactor = 1.0 + numSegments * 0.000005;
 
-                gc.setFill(segmentColor);
+                if(body.hasPower()) {
+                    gc.setFill(Color.WHITE);
+                }
+                else{
+                    gc.setFill(segmentColor);
+                }
                 gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
             }
 
