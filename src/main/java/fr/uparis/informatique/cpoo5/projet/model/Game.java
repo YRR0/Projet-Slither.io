@@ -11,8 +11,8 @@ public class Game {
     private boolean gameOver = false;
     private boolean speed;
     private List<Food> foodList = new ArrayList<>(); // Pour stocker tous les aliments de la map
-    private List<SnakeSegment> snake = new ArrayList<>();
-    private List<List<SnakeSegment>> snakeIA = new ArrayList<>();
+    private SnakeBody snake = new SnakeBody();
+    private List<SnakeBody> snakeIA = new ArrayList<>();
     private SnakeIAController iaController;
     private GameConfig gameConfig;
     private double directionX = 1;
@@ -20,7 +20,7 @@ public class Game {
 
     public Game() {
         this.gameConfig = new GameConfig();
-        snake.add(new NormalSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
+        snake.getSnakeBody().add(new NormalSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
         generateIA();
         generateAllFood();
         iaController = new SnakeIAController(this);
@@ -43,12 +43,12 @@ public class Game {
         int nbrIA = randomGenerator(gameConfig.getMinIA(), gameConfig.getMaxIA());
         int randPosX;
         int randPosY;
-        List<SnakeSegment> ia;
+        SnakeBody ia;
         for (int i = 0; i < nbrIA; ++i) {
             randPosX = randomGenerator(0, (int) gameConfig.getWidth());
             randPosY = randomGenerator(0, (int) gameConfig.getHeight());
-            ia = new ArrayList<>();
-            ia.add(new NormalSegment(randPosX, randPosY));
+            ia = new SnakeBody();
+            ia.getSnakeBody().add(new NormalSegment(randPosX, randPosY));
             snakeIA.add(ia);
         }
     }
@@ -60,7 +60,7 @@ public class Game {
 
     public void update() {
         if (!gameOver) {
-            SnakeSegment head = snake.get(0);
+            SnakeSegment head = snake.getSnakeBody().get(0);
 
             double newX = head.getX()
                     + directionX * (speed ? gameConfig.getIncSpeed() : GameConfig.getSPEED());
@@ -92,7 +92,7 @@ public class Game {
         }
     }
 
-    private void grow(double newX, double newY, List<SnakeSegment> snake) {
+    private void grow(double newX, double newY, SnakeBody snake) {
         // Utiliser une copie de la liste de nourriture pour éviter les
         // ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList);
@@ -100,46 +100,85 @@ public class Game {
         int totalFoodSize = 0;
 
         for (Food food : foodCopy) {
-            if (isCollidingWithFood(food, snake.get(0))) {
+            if (isCollidingWithFood(food, snake.getSnakeBody().get(0))) {
                 totalFoodSize += food.getSize();
                 for (int i = 0; i < totalFoodSize; ++i) {
-                    if(food.getPower() != null){
-                        addPowerToSegment(food.getPower(), snake, newX, newY);
+                    // Si la nourriture mangé contenait un pouvoir && que le joueur n'en avait pas déjà un
+                    if (food.getPower() != null && !snake.hasPower()) {
+                        addPowerToSnake(food.getPower(), snake, newX, newY);
                     }
-                    else{
-                        snake.add(0, new NormalSegment(newX, newY));
+                    //Si il a un pouvoir il le garde tant qu'il ne le perd pas peu importe la nourriture mangé
+                    else if (snake.hasPower()) {
+                        SnakeSegment head = snake.getSnakeBody().get(0);
+                        if (head instanceof ShieldSegment) {
+                            snake.getSnakeBody().add(0, new ShieldSegment(newX, newY));
+                        } else if (head instanceof WeakSegment) {
+                            snake.getSnakeBody().add(0, new WeakSegment(newX, newY));
+                        }
+                    } else {
+                        snake.getSnakeBody().add(0, new NormalSegment(newX, newY));
                     }
                 }
                 foodList.remove(food);
             }
         }
 
-        // Supprimer le dernier segment du serpent s'il n'a pas mangé de nourriture
-        snake.remove(snake.size() - 1);
-        
-        snake.add(0, new NormalSegment(newX, newY));
-    }
-    
-
-    public void addPowerToSegment(Power power, List<SnakeSegment> snake, double newX, double newY){
-        if(power == Power.WEAK){
-            snake.add(0, new WeakSegment(newX, newY));
-        }
-        else if(power == Power.SHIELD){
-            snake.add(0, new ShieldSegment(newX, newY));
-        }
+        //Fais avancer le serpent
+        move(snake, newX, newY);
     }
 
-    private void growIA(double newX, double newY, List<SnakeSegment> snakeIA) {
+    // Pour ajouter des segments spéciaux si le serpent a mangé une nourriture
+    // spéciale
+    public void addPowerToSnake(Power power, SnakeBody snake, double newX, double newY) {
+        snake.setPower(power);
+        int snakeSize = snake.getSnakeBody().size();
+        snake.getSnakeBody().removeAll(snake.getSnakeBody());
+        for (int i = 0; i < snakeSize; ++i) {
+            if (power == Power.WEAK) {
+                snake.getSnakeBody().add(0, new WeakSegment(newX, newY));
+            } else if (power == Power.SHIELD) {
+                snake.getSnakeBody().add(0, new ShieldSegment(newX, newY));
+            }
+        }
+    }
+
+    // Pour faire bouger le serpent en fonction des segments qui le composent
+    public void move(SnakeBody snake, double newX, double newY) {
+        SnakeSegment head = snake.getSnakeBody().get(0);
+        if (head instanceof NormalSegment) {
+            snake.getSnakeBody().remove(snake.getSnakeBody().size() - 1);
+            snake.getSnakeBody().add(0, new NormalSegment(newX, newY));
+        } else if (head instanceof ShieldSegment) {
+            snake.getSnakeBody().remove(snake.getSnakeBody().size() - 1);
+            snake.getSnakeBody().add(0, new ShieldSegment(newX, newY));
+        } else if (head instanceof WeakSegment) {
+            snake.getSnakeBody().remove(snake.getSnakeBody().size() - 1);
+            snake.getSnakeBody().add(0, new WeakSegment(newX, newY));
+        }
+    }
+
+    private void growIA(double newX, double newY, SnakeBody snakeIA) {
         // On utilise une liste qui copie pour éviter les exceptions
         // ConcurrentModificationException
         List<Food> foodCopy = new ArrayList<>(foodList);
         for (Food food : foodCopy) {
             // Vérifier la collision avec la nourriture
-            if (isCollidingWithFood(food, snakeIA.get(0))) {
+            if (isCollidingWithFood(food, snakeIA.getSnakeBody().get(0))) {
                 // Taille augmente en fonction de la taille de la nourriture
                 for (int i = 0; i < food.getSize(); ++i) {
-                    snakeIA.add(i, new NormalSegment(newX, newY));
+                    if (food.getPower() != null && !snakeIA.hasPower()) {
+                        System.out.println("IA food");
+                        addPowerToSnake(food.getPower(), snakeIA, newX, newY);
+                    } else if (snakeIA.hasPower()) {
+                        SnakeSegment head = snakeIA.getSnakeBody().get(0);
+                        if (head instanceof ShieldSegment) {
+                            snakeIA.getSnakeBody().add(0, new ShieldSegment(newX, newY));
+                        } else if (head instanceof WeakSegment) {
+                            snakeIA.getSnakeBody().add(0, new WeakSegment(newX, newY));
+                        }
+                    } else {
+                        snakeIA.getSnakeBody().add(0, new NormalSegment(newX, newY));
+                    }
                 }
                 // On retire de la liste originale
                 foodList.remove(food);
@@ -148,8 +187,7 @@ public class Game {
             }
         }
         // On met à jour les segments des IA
-        snakeIA.remove(snakeIA.size() - 1);
-        snakeIA.add(0, new NormalSegment(newX, newY));
+        move(snakeIA, newX, newY);
     }
 
     private boolean isCollidingWithFood(Food f, SnakeSegment head) {
@@ -173,8 +211,8 @@ public class Game {
 
     private boolean checkSelfCollision(double newX, double newY) {
         // Vérifier la collision avec le propre corps du serpent
-        for (int i = 1; i < snake.size(); i++) {
-            SnakeSegment segment = snake.get(i);
+        for (int i = 1; i < snake.getSnakeBody().size(); i++) {
+            SnakeSegment segment = snake.getSnakeBody().get(i);
 
             // Comparer les coordonnées de la tête avec celles du segment du corps
             if (newX == segment.getX() && newY == segment.getY()) {
@@ -188,7 +226,7 @@ public class Game {
 
     private boolean checkCollisionWithIA() {
         // Récupérer la tête du serpent du joueur
-        SnakeSegment head = snake.get(0);
+        SnakeSegment head = snake.getSnakeBody().get(0);
 
         // Calculer la différence pour centrer la vue
         double offsetX = gameConfig.getWidth() / 2 - head.getX();
@@ -199,8 +237,8 @@ public class Game {
         double normalizedHeadY = (head.getY() + offsetY + gameConfig.getHeight()) % gameConfig.getHeight();
 
         // Parcourir toutes les IA pour vérifier la collision avec leur tête
-        for (List<SnakeSegment> ia : snakeIA) {
-            SnakeSegment iaHead = ia.get(0);
+        for (SnakeBody ia : snakeIA) {
+            SnakeSegment iaHead = ia.getSnakeBody().get(0);
 
             // Normaliser les coordonnées de la tête de l'IA après ajustement
             double normalizedIAHeadX = (iaHead.getX() + offsetX + gameConfig.getWidth()) % gameConfig.getWidth();
@@ -223,11 +261,11 @@ public class Game {
 
     private boolean checkIACollisionWithPlayer() {
         // Récupérer la tête de l'IA
-        SnakeSegment iaHead = snakeIA.get(0).get(0);
+        SnakeSegment iaHead = snakeIA.get(0).getSnakeBody().get(0);
 
         // Vérifier la collision avec n'importe quelle partie du corps du joueur
-        for (int i = 0; i < snake.size(); i++) {
-            SnakeSegment playerSegment = snake.get(i);
+        for (int i = 0; i < snake.getSnakeBody().size(); i++) {
+            SnakeSegment playerSegment = snake.getSnakeBody().get(i);
 
             // Vérifier la collision avec la tête de l'IA
             if (iaHead.getX() == playerSegment.getX() && iaHead.getY() == playerSegment.getY()) {
@@ -263,11 +301,11 @@ public class Game {
         generateIA();
     }
 
-    public List<SnakeSegment> getSnake() {
+    public SnakeBody getSnake() {
         return snake;
     }
 
-    public List<List<SnakeSegment>> getIA() {
+    public List<SnakeBody> getIA() {
         return snakeIA;
     }
 
@@ -298,10 +336,10 @@ public class Game {
         foodList.add(food);
     }
 
+    // Pour choisir un pouvoir aléatoire
     private Power getRandomPower() {
-        // Obtenez toutes les valeurs de l'énumération FoodPower
+        // Toutes les valeurs de l'énumération FoodPower
         Power[] powers = Power.values();
-
         // Choix aléatoire d'un pouvoir
         int randomIndex = (int) (Math.random() * powers.length);
         return powers[randomIndex];
@@ -312,15 +350,15 @@ public class Game {
     }
 
     public boolean PlayerIsTooBig() {
-        return snake.size() > 200;
+        return snake.getSnakeBody().size() > 200;
     }
 
-    private boolean isCloseToPlayer(List<SnakeSegment> ia) {
-        SnakeSegment head = snake.get(0);
+    private boolean isCloseToPlayer(SnakeBody ia) {
+        SnakeSegment head = snake.getSnakeBody().get(0);
 
         // On calcule les distances entre IA et le joueur
-        double distanceToPlayerX = head.getX() - ia.get(0).getX();
-        double distanceToPlayerY = head.getY() - ia.get(0).getY();
+        double distanceToPlayerX = head.getX() - ia.getSnakeBody().get(0).getX();
+        double distanceToPlayerY = head.getY() - ia.getSnakeBody().get(0).getY();
 
         // Théorème de Pythagore pour avoir la distance
         double sq1 = Math.pow(distanceToPlayerX, 2);
@@ -341,7 +379,7 @@ public class Game {
     }
 
     private void updateIA() {
-        for (List<SnakeSegment> ia : this.snakeIA) {
+        for (SnakeBody ia : this.snakeIA) {
             // On vérifie si une IA est proche
             if (isCloseToPlayer(ia)) {
                 // Dans ce cas là on applique la stratégie kill
@@ -355,7 +393,7 @@ public class Game {
                 iaController.moveIaFoodStrat(ia);
             }
             // On applique les collisions avec la nourriture
-            growIA(ia.get(0).getX(), ia.get(0).getY(), ia);
+            growIA(ia.getSnakeBody().get(0).getX(), ia.getSnakeBody().get(0).getY(), ia);
         }
     }
 
@@ -394,7 +432,7 @@ public class Game {
     public void reset() {
         // Réinitialiser les listes
         foodList.clear();
-        snake.clear();
+        snake.getSnakeBody().clear();
         snakeIA.clear();
 
         // Réinitialiser les états du jeu
@@ -403,7 +441,7 @@ public class Game {
         speed = false;
 
         // Recréer le serpent initial et les IA
-        snake.add(new NormalSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
+        snake.getSnakeBody().add(new NormalSegment(gameConfig.getWidth() / 2, gameConfig.getHeight() / 2));
         generateIA();
         generateAllFood();
 

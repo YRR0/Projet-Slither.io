@@ -26,7 +26,7 @@ public class SnakeController {
         double mouseX = mouseEvent.getX();
         double mouseY = mouseEvent.getY();
 
-        SnakeSegment head = game.getSnake().get(0);
+        SnakeSegment head = game.getSnake().getSnakeBody().get(0);
 
         // Calculer la direction directe vers la position de la souris
         double directionX = mouseX - head.getX();

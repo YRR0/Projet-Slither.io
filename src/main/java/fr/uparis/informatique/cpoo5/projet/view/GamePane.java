@@ -2,6 +2,7 @@ package fr.uparis.informatique.cpoo5.projet.view;
 
 import fr.uparis.informatique.cpoo5.projet.model.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
+import fr.uparis.informatique.cpoo5.projet.model.SnakeBody;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -33,7 +34,7 @@ public class GamePane extends StackPane {
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
         // Trouver la tête du serpent
-        SnakeSegment head = game.getSnake().get(0);
+        SnakeSegment head = game.getSnake().getSnakeBody().get(0);
         // Calculer la différence pour centrer la vue
         double offsetX = WIDTH / 2 - head.getX();
         double offsetY = HEIGHT / 2 - head.getY();
@@ -50,24 +51,24 @@ public class GamePane extends StackPane {
             }
 
         // Dessiner le serpent
-        for (SnakeSegment segment : game.getSnake()) {
+        for (SnakeSegment segment : game.getSnake().getSnakeBody()) {
             double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
             double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
             // Facteur de croissance en fonction de la taille du serpent
-            double growthFactor = 1.0 + game.getSnake().size() * 0.000005;
+            double growthFactor = 1.0 + game.getSnake().getSnakeBody().size() * 0.000005;
 
             gc.setFill(segment.getColor());
             gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
         }
 
         // Dessiner les IA
-        for (List<SnakeSegment> ia : game.getIA()) {
-            for (SnakeSegment segment : ia) {
+        for (SnakeBody ia : game.getIA()) {
+            for (SnakeSegment segment : ia.getSnakeBody()) {
                 double adjustedX = (segment.getX() + offsetX + WIDTH) % WIDTH;
                 double adjustedY = (segment.getY() + offsetY + HEIGHT) % HEIGHT;
 
-                gc.setFill(Color.BLUE);
+                gc.setFill(segment.getColor());
                 gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
             }
         }
@@ -86,7 +87,7 @@ public class GamePane extends StackPane {
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial", 50));
 
-        int snakeSize = game.getSnake().size();
+        int snakeSize = game.getSnake().getSnakeBody().size();
 
         gc.fillText("" + snakeSize, scoreX, scoreY);
     }
@@ -99,7 +100,7 @@ public class GamePane extends StackPane {
         gc.fillText("Game Over", WIDTH / 2, HEIGHT / 2 - 40);
 
         // Afficher le score
-        int snakeSize = game.getSnake().size();
+        int snakeSize = game.getSnake().getSnakeBody().size();
         gc.setFont(Font.font("Arial", 20));
         gc.fillText("Taille du serpent : " + snakeSize, WIDTH / 2, HEIGHT / 2);
 

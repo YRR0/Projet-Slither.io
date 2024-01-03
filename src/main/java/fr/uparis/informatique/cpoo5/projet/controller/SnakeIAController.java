@@ -3,6 +3,7 @@ import java.util.List;
 
 import fr.uparis.informatique.cpoo5.projet.model.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
+import fr.uparis.informatique.cpoo5.projet.model.SnakeBody;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
 
 public class SnakeIAController {
@@ -32,8 +33,8 @@ public class SnakeIAController {
         return closest;
     }
 
-    public void moveIaFoodStrat(List<SnakeSegment> ia) {
-        SnakeSegment head = ia.get(0);
+    public void moveIaFoodStrat(SnakeBody ia) {
+        SnakeSegment head = ia.getSnakeBody().get(0);
         //On récupère la nourriture la plus proche        
         Food closestFood = closestFood(head);
         //On calcule leur distance
@@ -42,29 +43,29 @@ public class SnakeIAController {
         //On calcule l'angle
         double angleToFood = Math.atan2(distanceToFoodY, distanceToFoodX);
         //On met à jour la direction de l'IA
-        ia.get(0).setDirection(Math.cos(angleToFood), Math.sin(angleToFood));
+        ia.getSnakeBody().get(0).setDirection(Math.cos(angleToFood), Math.sin(angleToFood));
         //On calcule la nouvelle position
-        double newX = head.getX() + ia.get(0).getDirectionX() * game.getSpeed();
-        double newY = head.getY() + ia.get(0).getDirectionY() * game.getSpeed();
+        double newX = head.getX() + ia.getSnakeBody().get(0).getDirectionX() * game.getSpeed();
+        double newY = head.getY() + ia.getSnakeBody().get(0).getDirectionY() * game.getSpeed();
         //On met à jour        
-        ia.get(0).setX(newX);
-        ia.get(0).setY(newY);
+        ia.getSnakeBody().get(0).setX(newX);
+        ia.getSnakeBody().get(0).setY(newY);
     }
 
-    public void moveIaKillStrat(List<SnakeSegment> ia) {
-        SnakeSegment head = game.getSnake().get(0);
+    public void moveIaKillStrat(SnakeBody ia) {
+        SnakeSegment head = game.getSnake().getSnakeBody().get(0);
         //On calcule la différence entre les coordonnées du snake et des IA 
-        double distanceToPlayerX = head.getX() - ia.get(0).getX();
-        double distanceToPlayerY = head.getY() - ia.get(0).getY();
+        double distanceToPlayerX = head.getX() - ia.getSnakeBody().get(0).getX();
+        double distanceToPlayerY = head.getY() - ia.getSnakeBody().get(0).getY();
         //On calcule l'angle des IA par rapport au snake
         double angleToPlayer = Math.atan2(distanceToPlayerY, distanceToPlayerX);
         //On met à jour la direction
-        ia.get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
+        ia.getSnakeBody().get(0).setDirection(Math.cos(angleToPlayer), Math.sin(angleToPlayer));
         //On calcule les nouvelles coordonnées pour la tête des IA 
-        double newX = ia.get(0).getX() + ia.get(0).getDirectionX() * (0.35);
-        double newY = ia.get(0).getY() + ia.get(0).getDirectionY() * (0.35);
+        double newX = ia.getSnakeBody().get(0).getX() + ia.getSnakeBody().get(0).getDirectionX() * (0.35);
+        double newY = ia.getSnakeBody().get(0).getY() + ia.getSnakeBody().get(0).getDirectionY() * (0.35);
         //On met à jour les positions
-        ia.get(0).setX(newX);
-        ia.get(0).setY(newY);
+        ia.getSnakeBody().get(0).setX(newX);
+        ia.getSnakeBody().get(0).setY(newY);
     }
 }
