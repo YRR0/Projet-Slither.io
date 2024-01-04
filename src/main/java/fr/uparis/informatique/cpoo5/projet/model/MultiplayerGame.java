@@ -2,7 +2,7 @@ package fr.uparis.informatique.cpoo5.projet.model;
 import javafx.scene.paint.Color;
 
 public class MultiplayerGame extends Game{
-
+    private boolean gameOver2;
     private SnakeBody snakePlayer2;
     private double directionXPlayer2 = -1;
     private double directionYPlayer2 = 0;
@@ -34,7 +34,7 @@ public class MultiplayerGame extends Game{
 
             // Vérifier la collision avec le propre corps du deuxième serpent
             if (checkSelfCollision(newXPlayer2, newYPlayer2) || checkCollisionWithPlayer()) {
-                gameOver = true;
+                gameOver2 = true;
             } else {
                 // Faire croître le deuxième serpent et mettre à jour
                 grow(newXPlayer2, newYPlayer2, snakePlayer2);

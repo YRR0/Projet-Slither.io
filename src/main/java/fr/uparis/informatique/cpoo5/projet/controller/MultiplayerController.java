@@ -50,6 +50,7 @@ public class MultiplayerController {
                 game.setDirectionPlayer2(1,0);
                 break;
             case P:
+                gamePane.drawPause();
                 game.togglePause();
                 break;
             case R:
@@ -59,6 +60,7 @@ public class MultiplayerController {
                 break;
             case SPACE:
                 // Mettre en pause ou reprendre le jeu lorsque la touche "P" est pressée
+                gamePane.drawPause();
                 game.togglePause();
                 break;
         }

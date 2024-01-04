@@ -15,7 +15,6 @@ public class SnakeController {
     public SnakeController(Game game, GamePane gamePane) {
         this.game = game;
         this.gamePane = gamePane;
-
     }
 
     public void update() {

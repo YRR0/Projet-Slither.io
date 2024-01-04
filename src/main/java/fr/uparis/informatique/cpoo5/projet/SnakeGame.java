@@ -107,7 +107,6 @@ public class SnakeGame extends Application {
             }
         }.start();
 
-        // Afficher le nouveau stage pour le jeu
         gameStage.show();
     }
 

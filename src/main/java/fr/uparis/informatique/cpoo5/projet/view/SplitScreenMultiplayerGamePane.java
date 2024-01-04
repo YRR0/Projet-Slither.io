@@ -40,11 +40,12 @@ public class SplitScreenMultiplayerGamePane extends HBox {
     }
 
     public void render() {
-        renderPlayerCanvas(canvasPlayer1, game.getSnake());
-        renderPlayerCanvas(canvasPlayer2, game.getSnakePlayer2());
+
+        renderPlayerCanvas(canvasPlayer1, game.getSnake(),game.getSnakePlayer2());
+        renderPlayerCanvas(canvasPlayer2, game.getSnakePlayer2(),game.getSnake());
     }
 
-    private void renderPlayerCanvas(Canvas canvas, SnakeBody snake) {
+    private void renderPlayerCanvas(Canvas canvas, SnakeBody snake, SnakeBody snake2) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, WIDTH, HEIGHT);
         gc.setFill(Color.BLACK);
@@ -57,6 +58,8 @@ public class SplitScreenMultiplayerGamePane extends HBox {
         // Afficher les éléments décalés par la différence calculée
         renderFood(gc, offsetX, offsetY, game.getFoodList());
         renderSnake(gc, offsetX, offsetY, snake.getSnakeBody());
+
+        renderSnake(gc, offsetX, offsetY, snake2.getSnakeBody());
 
         drawScore(gc, snake);
     }
@@ -96,6 +99,28 @@ public class SplitScreenMultiplayerGamePane extends HBox {
     private Color getColorForSegment(int segmentIndex, int numSegments) {
         float hue = (float) segmentIndex / numSegments;
         return Color.hsb(hue * 360, 1.0, 1.0);
+    }
+
+    public void drawPause() {
+        GraphicsContext gc = canvasPlayer1.getGraphicsContext2D();
+        GraphicsContext gc2 = canvasPlayer2.getGraphicsContext2D();
+
+        gc.setFill(Color.rgb(0, 0, 0, 0.5));
+        gc2.setFill(Color.rgb(0, 0, 0, 0.5));
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
+        gc2.fillRect(0, 0, WIDTH, HEIGHT);
+
+        // Afficher le texte de pause
+        gc.setFill(Color.WHITE);
+        gc2.setFill(Color.WHITE);
+        gc.setFont(new Font("Arial", 40));
+        gc2.setFont(new Font("Arial", 40));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc2.setTextAlign(TextAlignment.CENTER);
+
+        gc.fillText("Pause", WIDTH / 2, HEIGHT / 2);
+        gc2.fillText("Pause", WIDTH / 2, HEIGHT / 2);
+
     }
 
     private void drawScore(GraphicsContext gc, SnakeBody snake) {
