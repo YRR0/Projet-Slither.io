@@ -1,8 +1,8 @@
-package fr.uparis.informatique.cpoo5.projet.model;
+package fr.uparis.informatique.cpoo5.projet.model.segment;
 
 import javafx.scene.paint.Color;
 
-public class ShieldSegment extends SnakeSegment{
+public class ShieldSegment extends SnakeSegment {
     public ShieldSegment(double x, double y) {
         super(x,y, Color.AZURE);
     }

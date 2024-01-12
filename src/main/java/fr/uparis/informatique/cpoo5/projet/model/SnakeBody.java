@@ -1,10 +1,13 @@
 package fr.uparis.informatique.cpoo5.projet.model;
 
+import fr.uparis.informatique.cpoo5.projet.model.element.Power;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SnakeBody {
-    private List<SnakeSegment> body;   
+    private List<SnakeSegment> body;
     private Power power;
     private boolean hasPower;
     private boolean immunity = false;

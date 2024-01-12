@@ -1,4 +1,4 @@
-package fr.uparis.informatique.cpoo5.projet.model;
+package fr.uparis.informatique.cpoo5.projet.model.segment;
 
 import javafx.scene.paint.Color;
 // La classe qui représente un segment du serpent dans le jeu

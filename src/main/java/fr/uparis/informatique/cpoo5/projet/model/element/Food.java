@@ -1,4 +1,4 @@
-package fr.uparis.informatique.cpoo5.projet.model;
+package fr.uparis.informatique.cpoo5.projet.model.element;
 import javafx.scene.paint.Color;
 // La classe qui représente un aliment dans le jeu
 public class Food {

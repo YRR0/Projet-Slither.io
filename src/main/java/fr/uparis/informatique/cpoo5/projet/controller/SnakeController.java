@@ -1,12 +1,10 @@
 package fr.uparis.informatique.cpoo5.projet.controller;
 
 import fr.uparis.informatique.cpoo5.projet.model.Game;
-import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-
-import java.awt.geom.Point2D;
 
 
 public class SnakeController {

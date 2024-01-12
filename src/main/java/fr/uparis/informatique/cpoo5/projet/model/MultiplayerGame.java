@@ -1,4 +1,6 @@
 package fr.uparis.informatique.cpoo5.projet.model;
+import fr.uparis.informatique.cpoo5.projet.model.segment.NormalSegment;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import javafx.scene.paint.Color;
 
 public class MultiplayerGame extends Game{

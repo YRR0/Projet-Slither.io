@@ -1,7 +1,14 @@
 package fr.uparis.informatique.cpoo5.projet.model;
 
 import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
+import fr.uparis.informatique.cpoo5.projet.model.element.Food;
+import fr.uparis.informatique.cpoo5.projet.model.element.Power;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
+import fr.uparis.informatique.cpoo5.projet.model.segment.NormalSegment;
+import fr.uparis.informatique.cpoo5.projet.model.segment.ShieldSegment;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
+import fr.uparis.informatique.cpoo5.projet.model.segment.WeakSegment;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -318,6 +325,12 @@ public class Game {
                 snake.setImmunity(false);
             }
         }, 1000); // 2000 milliseconds = 2 seconds
+    }
+
+    public void stopImmunityTimer() {
+        if (immunityTimer != null) {
+            immunityTimer.cancel();
+        }
     }
 
     public Timer getTimer(){

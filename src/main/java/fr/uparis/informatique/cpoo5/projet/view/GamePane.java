@@ -1,9 +1,10 @@
 package fr.uparis.informatique.cpoo5.projet.view;
 
-import fr.uparis.informatique.cpoo5.projet.model.Food;
+import fr.uparis.informatique.cpoo5.projet.model.element.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeBody;
-import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
+import fr.uparis.informatique.cpoo5.projet.model.element.Power;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -11,11 +12,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.scene.text.TextAlignment;
+import java.awt.*;
 import java.util.List;
+import javafx.scene.image.Image;
 
 public class GamePane extends StackPane {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
+
+    private final Image powerImage = new Image(getClass().getResourceAsStream("/images/b2.png"));
+    private final Image weakImage = new Image(getClass().getResourceAsStream("/images/w2.png"));
     private Game game;
     private Canvas canvas;
 
@@ -45,8 +51,19 @@ public class GamePane extends StackPane {
                     double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
                     double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
 
-                    gc.setFill(food.getColor());
-                    gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
+                    if(food.getPower() == null) {
+                        gc.setFill(food.getColor());
+                        gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
+                    }
+                    else{
+                        if(food.getPower() == Power.SHIELD){
+                            gc.drawImage(powerImage, adjustedX, adjustedY, 30, 30);
+                        }
+                        else{
+                            gc.drawImage(weakImage, adjustedX, adjustedY, 30, 30);
+                        }
+
+                    }
                 }
             }
 
@@ -64,11 +81,21 @@ public class GamePane extends StackPane {
                 double growthFactor = 1.0 + numSegments * 0.000005;
 
                 if (body.hasPower()) {
-                    gc.setFill(segment.getColor());
+                    if(body.getPower() == Power.SHIELD) {
+                        gc.setFill(segment.getColor());
+                        gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
+                    }
+                    else{
+                        double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor, adjustedX - SnakeSegment.SIZE * growthFactor};
+                        double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor, adjustedY + SnakeSegment.SIZE * growthFactor};
+
+                        gc.setFill(segment.getColor());
+                        gc.fillPolygon(xPoints, yPoints, 3);
+                    }
                 } else {
                     gc.setFill(segmentColor);
+                    gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
                 }
-                gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
             }
 
             // Dessiner les IA

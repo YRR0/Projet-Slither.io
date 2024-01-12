@@ -1,4 +1,4 @@
-package fr.uparis.informatique.cpoo5.projet.model;
+package fr.uparis.informatique.cpoo5.projet.model.segment;
 
 import javafx.scene.paint.Color;
 

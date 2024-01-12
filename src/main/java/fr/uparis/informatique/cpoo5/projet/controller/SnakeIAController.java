@@ -1,9 +1,9 @@
 package fr.uparis.informatique.cpoo5.projet.controller;
 
-import fr.uparis.informatique.cpoo5.projet.model.Food;
+import fr.uparis.informatique.cpoo5.projet.model.element.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeBody;
-import fr.uparis.informatique.cpoo5.projet.model.SnakeSegment;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 
 public class SnakeIAController {
     

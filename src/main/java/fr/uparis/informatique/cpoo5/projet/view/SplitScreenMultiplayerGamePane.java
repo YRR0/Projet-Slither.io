@@ -1,5 +1,7 @@
 package fr.uparis.informatique.cpoo5.projet.view;
 import fr.uparis.informatique.cpoo5.projet.model.*;
+import fr.uparis.informatique.cpoo5.projet.model.element.Food;
+import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.HBox;

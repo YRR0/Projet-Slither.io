@@ -48,7 +48,6 @@ public class SnakeGame extends Application {
         System.out.println("Menu displayed.");
     }
 
-
     private void startSimplePlayerGame() {
         // Initialiser le jeu et le panneau de jeu
         Game game = new Game();
@@ -65,6 +64,10 @@ public class SnakeGame extends Application {
 
         gameStage.setScene(gameScene);
 
+        gameStage.setOnCloseRequest(event -> {
+            System.out.println("Fenêtre fermée");
+            game.stopImmunityTimer();
+        });
         primaryStage.close();
 
         // Démarrer la boucle de jeu
