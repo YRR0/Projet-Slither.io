@@ -1,5 +1,4 @@
 package fr.uparis.informatique.cpoo5.projet.controller;
-import java.util.List;
 
 import fr.uparis.informatique.cpoo5.projet.model.Food;
 import fr.uparis.informatique.cpoo5.projet.model.Game;
@@ -32,6 +31,8 @@ public class SnakeIAController {
         }
         return closest;
     }
+
+  
 
     public void moveIaFoodStrat(SnakeBody ia) {
         SnakeSegment head = ia.getSnakeBody().get(0);

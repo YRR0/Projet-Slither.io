@@ -18,7 +18,7 @@ public class GameConfig {
     }
 
     public GameConfig(){
-        this(1,1,50);
+        this(1,5,50);
     }
 
     public double getWidth() {

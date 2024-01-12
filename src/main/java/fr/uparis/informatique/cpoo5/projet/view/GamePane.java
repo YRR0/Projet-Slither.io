@@ -27,30 +27,30 @@ public class GamePane extends StackPane {
 
     public void render() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        if(!game.getgameOver()){
-        gc.clearRect(0, 0, WIDTH, HEIGHT);
-        // Définir la couleur de fond comme noir
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, WIDTH, HEIGHT);
+        if (!game.getgameOver()) {
+            gc.clearRect(0, 0, WIDTH, HEIGHT);
+            // Définir la couleur de fond comme noir
+            gc.setFill(Color.BLACK);
+            gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Trouver la tête du serpent
-        SnakeSegment head = game.getSnake().getSnakeBody().get(0);
-        // Calculer la différence pour centrer la vue
-        double offsetX = WIDTH / 2 - head.getX();
-        double offsetY = HEIGHT / 2 - head.getY();
+            // Trouver la tête du serpent
+            SnakeSegment head = game.getSnake().getSnakeBody().get(0);
+            // Calculer la différence pour centrer la vue
+            double offsetX = WIDTH / 2 - head.getX();
+            double offsetY = HEIGHT / 2 - head.getY();
 
-        // Afficher tous les éléments décalés par la différence calculée
-        for (Food food : game.getFoodList()) {
-            if(!food.food_or_deadFood()) {
-                double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
-                double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
+            // Afficher tous les éléments décalés par la différence calculée
+            for (Food food : game.getFoodList()) {
+                if (!food.food_or_deadFood()) {
+                    double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
+                    double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
 
-                gc.setFill(food.getColor());
-                gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
+                    gc.setFill(food.getColor());
+                    gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
                 }
             }
 
-        // Dessiner le serpent
+            // Dessiner le serpent
             int numSegments = game.getSnake().getSnakeBody().size();
             SnakeBody body = game.getSnake();
             List<SnakeSegment> snake = game.getSnake().getSnakeBody();
@@ -63,16 +63,15 @@ public class GamePane extends StackPane {
 
                 double growthFactor = 1.0 + numSegments * 0.000005;
 
-                if(body.hasPower()) {
-                    gc.setFill(Color.WHITE);
-                }
-                else{
+                if (body.hasPower()) {
+                    gc.setFill(segment.getColor());
+                } else {
                     gc.setFill(segmentColor);
                 }
                 gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
             }
 
-        // Dessiner les IA
+            // Dessiner les IA
             for (SnakeBody ia : game.getIA()) {
                 int numSegmentsIA = ia.getSnakeBody().size();
                 for (int i = 0; i < numSegmentsIA; i++) {
@@ -82,15 +81,17 @@ public class GamePane extends StackPane {
 
                     // Utilisation d'une palette de couleurs en fonction de l'indice du segment
                     Color segmentColorIA = getColorForSegment(i, numSegmentsIA);
-
-                    gc.setFill(segmentColorIA);
+                    if (ia.hasPower()) {
+                        gc.setFill(segmentIA.getColor());
+                    } else {
+                        gc.setFill(segmentColorIA);
+                    }
                     gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
                 }
             }
 
             drawScore(gc);
-        }
-        else{
+        } else {
             drawGameOverScreen(gc);
         }
     }
@@ -128,7 +129,6 @@ public class GamePane extends StackPane {
         float hue = (float) segmentIndex / numSegments;
         return Color.hsb(hue * 360, 1.0, 1.0);
     }
-
 
     public void drawPause() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
