@@ -7,6 +7,7 @@ public class SnakeBody {
     private List<SnakeSegment> body;   
     private Power power;
     private boolean hasPower;
+    private boolean immunity = false;
     
     public SnakeBody(){
         body = new ArrayList<>();
@@ -34,5 +35,13 @@ public class SnakeBody {
 
     public List<SnakeSegment> getSnakeBody(){
         return this.body;
+    }
+
+    public boolean isImmune(){
+        return this.immunity;
+    }
+
+    public void setImmunity(boolean b){
+        this.immunity = b;
     }
 }

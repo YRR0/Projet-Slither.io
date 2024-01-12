@@ -4,6 +4,8 @@ import fr.uparis.informatique.cpoo5.projet.controller.SnakeIAController;
 import fr.uparis.informatique.cpoo5.projet.model.factoryColor.RandomColorFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Game {
     private boolean paused = false;
@@ -16,8 +18,6 @@ public class Game {
     protected GameConfig gameConfig;
     private double directionX = 1;
     private double directionY = 0;
-
-    private boolean recentPower;
 
     public Game() {
         this.gameConfig = new GameConfig();
@@ -84,33 +84,27 @@ public class Game {
                     + directionY * (speed ? gameConfig.getIncSpeed() : GameConfig.getSPEED());
 
             // Vérifier la collision avec le corps du serpent
-            if (checkSelfCollision(newX, newY) || checkCollisionWithIA()) {
-                if (snake.hasPower() && checkCollisionWithIA()) {
-                    System.out.println("Cond 0");
-
-                    snakeIA.clear();
-                    generateIA();
-                    snake.removePower();
-                } else if (!snake.hasPower()) {
-                    System.out.println("Cond 1");
-                    gameOver = true;
+            if (checkSelfCollision(newX, newY)) {
+                if (snake.hasPower()) {
+                    if (snake.getPower() == Power.SHIELD) {
+                        System.out.println("Self collision && shield");
+                        snake.removePower();
+                    }
                 } else {
-                    snake.removePower();
+                    System.out.println("Self collision && no shield");
+                    gameOver = true;
                 }
+            } else if (checkCollisionWithIA()) {
+                System.out.println("Collsion joueur avec IA && no shield");
+                gameOver = true;
             } else {
                 // Si aucune collision avec le corps du serpent n'est détectée, faire croître le
                 // serpent et mettre à jour l'IA
                 grow(newX, newY, snake);
-                if (!checkIACollisionWithPlayer() && !snake.hasPower()) {
-                    // System.out.println("Cond 2");
-                    // snakeIA.clear();
-                    // generateIA();
+                if (!checkIACollisionWithPlayer()) {
                     updateIA();
-                } else if (!checkIACollisionWithPlayer()) {
-                    // System.out.println("Cond 3");
-                    updateIA();
-                } else if (checkIACollisionWithPlayer()) {
-                    // System.out.println("Cond 4");
+                } else {
+                    System.out.println("Cond 4");
                     respawnOneIA();
                 }
             }
@@ -279,11 +273,17 @@ public class Game {
                         normalizedHeadY < normalizedIAHeadY + SnakeSegment.SIZE &&
                         normalizedHeadY + SnakeSegment.SIZE > normalizedIAHeadY) {
 
+                    if (snake.isImmune()) {
+                        // Temps d'immunité
+                        return false;
+                    }
+
                     // Si le joueur possède un bouclier et que sa tête rentre en collision avec une
                     // IA et que l'IA n'a pas de segment faible
                     if (this.snake.getPower() == Power.SHIELD && ia.getPower() != Power.WEAK) {
                         // System.out.println("Collision mais shield joueur");
-                        // On retire le shield du joueur
+                        // Immunité de quelques secondes
+                        immunity(this.snake);
                         removeSnakePower(snake);
                         return false;
                     }
@@ -291,6 +291,7 @@ public class Game {
                     else if (ia.getPower() == Power.WEAK) {
                         // System.out.println("Collision mais weak joueur");
                         // On retire la moitié des segments de l'IA
+                        immunity(this.snake);
                         applyWeakPower(ia);
                         return false;
                     } else {
@@ -303,6 +304,18 @@ public class Game {
         }
         // Aucune collision avec les IA
         return false;
+    }
+
+    private void immunity(SnakeBody snake) {
+        snake.setImmunity(true);
+        // Timer pour faire en sorte que le joueur ait une immunité de 2 secondes quand
+        // il perd son shield
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                snake.setImmunity(false);
+            }
+        }, 2000); // 2000 milliseconds = 2 seconds
     }
 
     // Pour enlever le pouvoir du serpent en cas de collision ou autre
@@ -359,10 +372,16 @@ public class Game {
                     System.out.println("Collision de l'IA avec le corps du joueur détectée. " +
                             "IA: " + iaHead.getX() + " " + iaHead.getY() +
                             " Joueur: " + playerSegment.getX() + " " + playerSegment.getY() + "\n");
+
+                    if (ia.isImmune()) {
+                        // Temps d'immunité
+                        return false;
+                    }
                     // Si l'IA possède un bouclier et que sa tête rentre en contact avec le joueur
                     if (ia.getPower() == Power.SHIELD && this.snake.getPower() != Power.WEAK) {
                         System.out.println("Collision mais shield IA");
                         // On retire le bouclier de l'IA
+                        immunity(ia);
                         removeSnakePower(ia);
                         return false;
                     }
@@ -370,6 +389,7 @@ public class Game {
                     // sans retirer le pouvoir de l'IA
                     if (this.snake.getPower() == Power.WEAK) {
                         // System.out.println("Collision mais weak IA");
+                        immunity(ia);
                         applyWeakPower(this.snake);
                         return false;
                     } else {
