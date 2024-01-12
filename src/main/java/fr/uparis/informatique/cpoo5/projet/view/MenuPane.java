@@ -6,6 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.paint.Color;import javafx.scene.paint.Color;
 
 public class MenuPane extends StackPane {
     private Stage primaryStage;
@@ -28,7 +32,15 @@ public class MenuPane extends StackPane {
 
     private void initializeMenu() {
 
-        setStyle("-fx-background-color: #1c1c1c;");
+        //setStyle("-fx-background-color: #1c1c1c;");
+        Image backgroundImage = new Image("/images/fond.jpg");
+        ImageView backgroundView = new ImageView(backgroundImage);
+
+        backgroundView.setFitWidth(1000);
+        backgroundView.setFitHeight(512);
+
+        // Ajouter la vue d'image en arrière-plan
+        getChildren().add(backgroundView);
         //setAlignment(Pos.CENTER);
 
         Button simplePlayerButton = createMenuButton("Simple Player");
@@ -45,7 +57,7 @@ public class MenuPane extends StackPane {
         twoPlayerButton.setOnAction(e -> handleButtonClick("Two Player"));
         onlineButton.setOnAction(e -> handleButtonClick("Online"));
 
-        Scene scene = new Scene(this, 1000, 400);
+        Scene scene = new Scene(this, 1000, 512);
         primaryStage.setScene(scene);
 
         primaryStage.centerOnScreen();
@@ -53,7 +65,11 @@ public class MenuPane extends StackPane {
 
     private Button createMenuButton(String text) {
         Button button = new Button(text);
-        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 24px;");
+        Color originalColor = Color.web("#4CAF50");
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+
+        button.setStyle("-fx-background-color: #388E3C; -fx-text-fill: white; -fx-font-size: 24px;");
         button.setMinSize(300, 80);
         return button;
     }
@@ -65,5 +81,12 @@ public class MenuPane extends StackPane {
         else if ("Two Player".equals(option) && onStartMultiPlayerGame != null) {
             onStartMultiPlayerGame.run();
         }
+    }
+
+    private String toRGBCode(Color color) {
+        return String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
     }
 }
