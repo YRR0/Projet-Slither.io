@@ -81,15 +81,13 @@ public class GamePane extends StackPane {
                 double growthFactor = 1.0 + numSegments * 0.000005;
 
                 if (body.hasPower()) {
+                    gc.setFill(segment.getColor());
                     if(body.getPower() == Power.SHIELD) {
-                        gc.setFill(segment.getColor());
                         gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
                     }
                     else{
                         double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor, adjustedX - SnakeSegment.SIZE * growthFactor};
                         double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor, adjustedY + SnakeSegment.SIZE * growthFactor};
-
-                        gc.setFill(segment.getColor());
                         gc.fillPolygon(xPoints, yPoints, 3);
                     }
                 } else {
@@ -110,10 +108,18 @@ public class GamePane extends StackPane {
                     Color segmentColorIA = getColorForSegment(i, numSegmentsIA);
                     if (ia.hasPower()) {
                         gc.setFill(segmentIA.getColor());
+                        if(ia.getPower() == Power.SHIELD){
+                            gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE , SnakeSegment.SIZE );
+                        }
+                        else{
+                            double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE , adjustedX - SnakeSegment.SIZE };
+                            double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE , adjustedY + SnakeSegment.SIZE };
+                            gc.fillPolygon(xPoints, yPoints, 3);
+                        }
                     } else {
                         gc.setFill(segmentColorIA);
+                        gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
                     }
-                    gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
                 }
             }
 
