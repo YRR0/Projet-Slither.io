@@ -18,6 +18,7 @@ public class Game {
     protected GameConfig gameConfig;
     private double directionX = 1;
     private double directionY = 0;
+    private Timer immunityTimer;
 
     public Game() {
         this.gameConfig = new GameConfig();
@@ -104,7 +105,7 @@ public class Game {
                 if (!checkIACollisionWithPlayer()) {
                     updateIA();
                 } else {
-                    System.out.println("Cond 4");
+                    System.out.println("Collision IA avec joueur && no shield IA");
                     respawnOneIA();
                 }
             }
@@ -308,14 +309,19 @@ public class Game {
 
     private void immunity(SnakeBody snake) {
         snake.setImmunity(true);
-        // Timer pour faire en sorte que le joueur ait une immunité de 2 secondes quand
-        // il perd son shield
-        new Timer().schedule(new TimerTask() {
+        // Timer pour faire en sorte que le serpent ait une immunité de 2 secondes quand
+        // en cas de pouvoir
+        immunityTimer = new Timer();
+        immunityTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 snake.setImmunity(false);
             }
-        }, 2000); // 2000 milliseconds = 2 seconds
+        }, 1000); // 2000 milliseconds = 2 seconds
+    }
+
+    public Timer getTimer(){
+        return this.immunityTimer;
     }
 
     // Pour enlever le pouvoir du serpent en cas de collision ou autre
