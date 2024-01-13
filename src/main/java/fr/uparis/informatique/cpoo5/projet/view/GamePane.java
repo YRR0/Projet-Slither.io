@@ -87,7 +87,7 @@ public final class GamePane extends StackPane {
                         //double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor, adjustedX - SnakeSegment.SIZE * growthFactor};
                         //double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor, adjustedY + SnakeSegment.SIZE * growthFactor};
                         //gc.fillPolygon(xPoints, yPoints, 3);
-                        gc.fillOval(adjustedX, adjustedY, (SnakeSegment.SIZE-15) * growthFactor, (SnakeSegment.SIZE-15) * growthFactor);
+                        gc.fillOval(adjustedX, adjustedY, (SnakeSegment.SIZE-10) * growthFactor, (SnakeSegment.SIZE-10) * growthFactor);
                     }
                 } else {
                     gc.setFill(segmentColor);
@@ -115,7 +115,7 @@ public final class GamePane extends StackPane {
                             //double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE , adjustedX - SnakeSegment.SIZE };
                             //double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE , adjustedY + SnakeSegment.SIZE };
                             //gc.fillPolygon(xPoints, yPoints, 3);
-                            gc.fillOval(adjustedX, adjustedY, (SnakeSegment.SIZE-15) , (SnakeSegment.SIZE-15) );
+                            gc.fillOval(adjustedX, adjustedY, (SnakeSegment.SIZE-10) , (SnakeSegment.SIZE-10) );
                         }
                     } else {
                         gc.setFill(segmentColorIA);
