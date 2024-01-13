@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public sealed class Game permits MultiplayerGame{
+public sealed class Game permits MultiplayerGame {
     private boolean paused = false;
     protected boolean gameOver = false;
     protected boolean speed;
@@ -416,7 +416,8 @@ public sealed class Game permits MultiplayerGame{
                         // System.out.println("Joueur mort");
                         // convertIAToFood(ia);
                         System.out.println(true);
-                        snakeIA.remove(ia);
+                        // snakeIA.remove(ia);
+                        convertIAToFood(ia);
                         return true;
                     }
                 }
@@ -427,19 +428,17 @@ public sealed class Game permits MultiplayerGame{
 
     // Utilisation dans la méthode convertIAToFood
     private void convertIAToFood(SnakeBody ia) {
-        for (SnakeSegment segmentIA : ia.getSnakeBody()) {
-            double x = segmentIA.getX();
-            double y = segmentIA.getY();
+        for (int i = 0; i < 5; ++i) {
+
+            double x = ia.getSnakeBody().get(i).getX();
+            double y = ia.getSnakeBody().get(i).getY();
 
             RandomColorFactory f = new RandomColorFactory();
 
             foodList.add(new Food(x, y, f.generateColor()));
         }
-
         // Retirer l'IA de la liste des IA, elle va réapparaître autre part
         snakeIA.remove(ia);
-        // Générer une nouvelle IA à un emplacement aléatoire
-        generateIA();
     }
 
     public SnakeBody getSnake() {
