@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Game {
+public sealed class Game permits MultiplayerGame{
     private boolean paused = false;
     protected boolean gameOver = false;
     protected boolean speed;

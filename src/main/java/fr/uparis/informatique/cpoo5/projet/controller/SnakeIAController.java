@@ -5,7 +5,7 @@ import fr.uparis.informatique.cpoo5.projet.model.Game;
 import fr.uparis.informatique.cpoo5.projet.model.SnakeBody;
 import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 
-public class SnakeIAController {
+public final class SnakeIAController {
     
     private Game game;
 

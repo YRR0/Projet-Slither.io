@@ -6,7 +6,7 @@ import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SnakeBody {
+public final class SnakeBody {
     private List<SnakeSegment> body;
     private Power power;
     private boolean hasPower;

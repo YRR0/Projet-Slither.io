@@ -112,7 +112,4 @@ public class SnakeGame extends Application {
 
         gameStage.show();
     }
-
-
-
 }

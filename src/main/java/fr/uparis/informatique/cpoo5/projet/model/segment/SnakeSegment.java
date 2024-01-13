@@ -2,7 +2,7 @@ package fr.uparis.informatique.cpoo5.projet.model.segment;
 
 import javafx.scene.paint.Color;
 // La classe qui représente un segment du serpent dans le jeu
-public abstract class SnakeSegment {
+public sealed abstract class SnakeSegment permits ShieldSegment, NormalSegment, WeakSegment{
     // La taille d'un segment du serpent
     public static final double SIZE = 25;
     private Color color;

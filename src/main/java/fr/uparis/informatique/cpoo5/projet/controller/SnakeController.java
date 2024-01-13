@@ -7,7 +7,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 
-public class SnakeController {
+public final class SnakeController {
     private Game game;
     private GamePane gamePane;
     public SnakeController(Game game, GamePane gamePane) {

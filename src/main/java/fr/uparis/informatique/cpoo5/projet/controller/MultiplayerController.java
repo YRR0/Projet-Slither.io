@@ -5,7 +5,7 @@ import fr.uparis.informatique.cpoo5.projet.view.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class MultiplayerController {
+public final class MultiplayerController {
     SplitScreenMultiplayerGamePane gamePane;
     private MultiplayerGame game;
 

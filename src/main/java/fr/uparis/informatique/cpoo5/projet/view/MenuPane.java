@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.paint.Color;import javafx.scene.paint.Color;
 
-public class MenuPane extends StackPane {
+public final class MenuPane extends StackPane {
     private Stage primaryStage;
     private Runnable onStartGame;
 

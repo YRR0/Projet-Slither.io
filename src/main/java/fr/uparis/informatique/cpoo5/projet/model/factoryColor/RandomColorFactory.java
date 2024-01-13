@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import java.util.Random;
 
 // Implémentation concrète de la Factory
-public class RandomColorFactory implements ColorFactory {
+public final class RandomColorFactory implements ColorFactory {
     private Color randomColor;
     public RandomColorFactory() {
         generateRandomColor();
