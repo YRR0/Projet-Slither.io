@@ -80,15 +80,14 @@ public final class GamePane extends StackPane {
 
                 if (body.hasPower()) {
                     gc.setFill(segment.getColor());
-                    if (body.getPower() == Power.SHIELD) {
-                        gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor,
-                                SnakeSegment.SIZE * growthFactor);
-                    } else {
-                        double[] xPoints = { adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor,
-                                adjustedX - SnakeSegment.SIZE * growthFactor };
-                        double[] yPoints = { adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor,
-                                adjustedY + SnakeSegment.SIZE * growthFactor };
-                        gc.fillPolygon(xPoints, yPoints, 3);
+                    if(body.getPower() == Power.SHIELD) {
+                        gc.fillRect(adjustedX, adjustedY, 20 * growthFactor, 20 * growthFactor);
+                    }
+                    else{
+                        //double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor, adjustedX - SnakeSegment.SIZE * growthFactor};
+                        //double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor, adjustedY + SnakeSegment.SIZE * growthFactor};
+                        //gc.fillPolygon(xPoints, yPoints, 3);
+                        gc.fillOval(adjustedX, adjustedY, (SnakeSegment.SIZE-15) * growthFactor, (SnakeSegment.SIZE-15) * growthFactor);
                     }
                 } else {
                     gc.setFill(segmentColor);
@@ -109,14 +108,14 @@ public final class GamePane extends StackPane {
                     Color segmentColorIA = getColorForSegment(i, numSegmentsIA);
                     if (ia.hasPower()) {
                         gc.setFill(segmentIA.getColor());
-                        if (ia.getPower() == Power.SHIELD) {
-                            gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
-                        } else {
-                            double[] xPoints = { adjustedX, adjustedX + SnakeSegment.SIZE,
-                                    adjustedX - SnakeSegment.SIZE };
-                            double[] yPoints = { adjustedY, adjustedY + SnakeSegment.SIZE,
-                                    adjustedY + SnakeSegment.SIZE };
-                            gc.fillPolygon(xPoints, yPoints, 3);
+                        if(ia.getPower() == Power.SHIELD){
+                            gc.fillRect(adjustedX, adjustedY, 20 , 20 );
+                        }
+                        else{
+                            //double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE , adjustedX - SnakeSegment.SIZE };
+                            //double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE , adjustedY + SnakeSegment.SIZE };
+                            //gc.fillPolygon(xPoints, yPoints, 3);
+                            gc.fillOval(adjustedX, adjustedY, (SnakeSegment.SIZE-15) , (SnakeSegment.SIZE-15) );
                         }
                     } else {
                         gc.setFill(segmentColorIA);
