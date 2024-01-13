@@ -1,23 +1,26 @@
 package fr.uparis.informatique.cpoo5.projet.model;
+
 import fr.uparis.informatique.cpoo5.projet.model.segment.NormalSegment;
 import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import javafx.scene.paint.Color;
 
-public class MultiplayerGame extends Game{
+public class MultiplayerGame extends Game {
     private boolean gameOver2;
     private SnakeBody snakePlayer2;
     private double directionXPlayer2 = -1;
     private double directionYPlayer2 = 0;
+
     public MultiplayerGame() {
         super();
         // Initialiser le deuxième serpent
         snakePlayer2 = new SnakeBody();
-        snakePlayer2.getSnakeBody().add(new NormalSegment(gameConfig.getWidth() / 2 + 3, gameConfig.getHeight() / 2, Color.BLUE));
+        snakePlayer2.getSnakeBody()
+                .add(new NormalSegment(gameConfig.getWidth() / 2 + 3, gameConfig.getHeight() / 2, Color.BLUE));
     }
 
     public void setDirectionPlayer2(double directionX, double directionY) {
-            this.directionXPlayer2 = directionX;
-            this.directionYPlayer2 = directionY;
+        this.directionXPlayer2 = directionX;
+        this.directionYPlayer2 = directionY;
     }
 
     @Override

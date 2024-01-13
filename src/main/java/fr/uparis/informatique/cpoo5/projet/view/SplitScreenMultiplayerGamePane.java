@@ -1,4 +1,5 @@
 package fr.uparis.informatique.cpoo5.projet.view;
+
 import fr.uparis.informatique.cpoo5.projet.model.*;
 import fr.uparis.informatique.cpoo5.projet.model.element.Food;
 import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
@@ -43,8 +44,8 @@ public class SplitScreenMultiplayerGamePane extends HBox {
 
     public void render() {
 
-        renderPlayerCanvas(canvasPlayer1, game.getSnake(),game.getSnakePlayer2());
-        renderPlayerCanvas(canvasPlayer2, game.getSnakePlayer2(),game.getSnake());
+        renderPlayerCanvas(canvasPlayer1, game.getSnake(), game.getSnakePlayer2());
+        renderPlayerCanvas(canvasPlayer2, game.getSnakePlayer2(), game.getSnake());
     }
 
     private void renderPlayerCanvas(Canvas canvas, SnakeBody snake, SnakeBody snake2) {
@@ -68,7 +69,7 @@ public class SplitScreenMultiplayerGamePane extends HBox {
 
     private void renderFood(GraphicsContext gc, double offsetX, double offsetY, List<Food> foodList) {
         for (Food food : foodList) {
-            if(!food.food_or_deadFood()) {
+            if (!food.food_or_deadFood()) {
                 double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
                 double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
 

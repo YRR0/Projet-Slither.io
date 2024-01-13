@@ -41,13 +41,13 @@ public class MultiplayerController {
                 game.setDirectionPlayer2(0, -1);
                 break;
             case S:
-                game.setDirectionPlayer2(0,1);
+                game.setDirectionPlayer2(0, 1);
                 break;
             case Q:
-                game.setDirectionPlayer2(-1,0);
+                game.setDirectionPlayer2(-1, 0);
                 break;
             case D:
-                game.setDirectionPlayer2(1,0);
+                game.setDirectionPlayer2(1, 0);
                 break;
             case P:
                 gamePane.drawPause();

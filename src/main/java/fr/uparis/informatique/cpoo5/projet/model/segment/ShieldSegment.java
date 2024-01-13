@@ -4,6 +4,6 @@ import javafx.scene.paint.Color;
 
 public class ShieldSegment extends SnakeSegment {
     public ShieldSegment(double x, double y) {
-        super(x,y, Color.AZURE);
+        super(x, y, Color.AZURE);
     }
 }

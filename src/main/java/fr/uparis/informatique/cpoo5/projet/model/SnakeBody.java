@@ -11,40 +11,44 @@ public class SnakeBody {
     private Power power;
     private boolean hasPower;
     private boolean immunity = false;
-    
-    public SnakeBody(){
+
+    public SnakeBody() {
         body = new ArrayList<>();
         power = null;
         hasPower = false;
     }
 
-    public void setPower(Power power){
+    public void setPower(Power power) {
         this.power = power;
         hasPower = true;
     }
 
-    public void removePower(){
+    public void removePower() {
         this.power = null;
         hasPower = false;
     }
 
-    public Power getPower(){
+    public Power getPower() {
         return this.power;
     }
 
-    public boolean hasPower(){
+    public boolean hasPower() {
         return this.hasPower;
     }
 
-    public List<SnakeSegment> getSnakeBody(){
+    public List<SnakeSegment> getSnakeBody() {
         return this.body;
     }
 
-    public boolean isImmune(){
+    public boolean isImmune() {
         return this.immunity;
     }
 
-    public void setImmunity(boolean b){
+    public void setImmunity(boolean b) {
         this.immunity = b;
+    }
+
+    public void setBody(List<SnakeSegment> body) {
+        this.body = body;
     }
 }

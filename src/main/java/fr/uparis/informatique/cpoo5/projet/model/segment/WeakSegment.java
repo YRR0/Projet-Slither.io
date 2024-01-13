@@ -6,6 +6,6 @@ import javafx.scene.paint.Color;
 public class WeakSegment extends SnakeSegment {
 
     public WeakSegment(double x, double y) {
-        super(x,y, Color.GREEN);
-    }    
+        super(x, y, Color.GREEN);
+    }
 }

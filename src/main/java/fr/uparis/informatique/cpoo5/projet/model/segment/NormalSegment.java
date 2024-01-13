@@ -4,13 +4,10 @@ import javafx.scene.paint.Color;
 
 public class NormalSegment extends SnakeSegment {
     public NormalSegment(double x, double y) {
-        super(x,y, Color.BLUE);
+        super(x, y, Color.BLUE);
     }
 
-    public NormalSegment(double x, double y,Color a) {
-        super(x,y,a);
+    public NormalSegment(double x, double y, Color a) {
+        super(x, y, a);
     }
 }
-
-    
-

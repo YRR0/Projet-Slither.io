@@ -1,6 +1,7 @@
 package fr.uparis.informatique.cpoo5.projet.model;
 
 import javafx.stage.Screen;
+
 public class GameConfig {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
@@ -17,8 +18,8 @@ public class GameConfig {
         this.initialFoodCount = initialFoodCount;
     }
 
-    public GameConfig(){
-        this(1,5,50);
+    public GameConfig() {
+        this(1, 2, 50);
     }
 
     public double getWidth() {
@@ -33,7 +34,9 @@ public class GameConfig {
         return SPEED;
     }
 
-    public double getIncSpeed(){return INC_SPEED; }
+    public double getIncSpeed() {
+        return INC_SPEED;
+    }
 
     public int getMinIA() {
         return minIA;

@@ -6,18 +6,18 @@ import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-
 public class SnakeController {
     private Game game;
     private GamePane gamePane;
+
     public SnakeController(Game game, GamePane gamePane) {
         this.game = game;
         this.gamePane = gamePane;
     }
 
     public void update() {
-            game.update();
-            gamePane.render();
+        game.update();
+        gamePane.render();
     }
 
     // Méthode pour bien controler le jeu
@@ -33,9 +33,11 @@ public class SnakeController {
         // Calculer la distance entre la tête du serpent et la position de la souris
         double distanceToMouse = Math.hypot(mouseX - head.getX(), mouseY - head.getY());
 
-        // Activer le suivi de la souris uniquement si la souris se déplace au-delà de la zone morte
+        // Activer le suivi de la souris uniquement si la souris se déplace au-delà de
+        // la zone morte
         if (distanceToMouse > deadZone) {
-            // Ajouter une constante pour définir la vitesse de rotation maximale (en radians par étape)
+            // Ajouter une constante pour définir la vitesse de rotation maximale (en
+            // radians par étape)
             double maxRotationSpeed = 0.05;
 
             // Calculer l'angle entre la tête du serpent et la position de la souris
@@ -44,7 +46,8 @@ public class SnakeController {
             // Obtenir l'angle actuel du serpent
             double currentAngle = Math.atan2(game.getDirectionY(), game.getDirectionX());
 
-            // Lisser le mouvement en ajustant progressivement l'angle vers la position de la souris
+            // Lisser le mouvement en ajustant progressivement l'angle vers la position de
+            // la souris
             double deltaAngle = targetAngle - currentAngle;
             if (deltaAngle > Math.PI) {
                 deltaAngle -= 2 * Math.PI;
@@ -77,11 +80,12 @@ public class SnakeController {
             case RIGHT:
                 game.setDirection(1, 0);
                 break;
-            case  P: // Mettre en pause ou reprendre le jeu lorsque la touche "P" est pressée
+            case P: // Mettre en pause ou reprendre le jeu lorsque la touche "P" est pressée
                 gamePane.drawPause();
-                game.togglePause(); break;
+                game.togglePause();
+                break;
             case R:
-                if(game.getgameOver()){
+                if (game.getgameOver()) {
                     game.reset();
                 }
                 break;

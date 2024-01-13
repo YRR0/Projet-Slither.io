@@ -333,7 +333,7 @@ public class Game {
         }
     }
 
-    public Timer getTimer(){
+    public Timer getTimer() {
         return this.immunityTimer;
     }
 
@@ -443,7 +443,7 @@ public class Game {
     }
 
     public SnakeBody getSnake() {
-        return snake;
+        return this.snake;
     }
 
     public List<SnakeBody> getIA() {
@@ -486,7 +486,7 @@ public class Game {
     }
 
     public List<Food> getFoodList() {
-        return foodList;
+        return this.foodList;
     }
 
     public boolean PlayerIsTooBig() {
@@ -602,6 +602,7 @@ public class Game {
     }
 
     public GameConfig getGameConfig() {
-        return this.gameConfig;
+        return new GameConfig(this.gameConfig.getMinIA(), this.gameConfig.getMaxIA(),
+                this.gameConfig.getInitialFoodCount());
     }
 }

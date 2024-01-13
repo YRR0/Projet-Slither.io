@@ -6,9 +6,11 @@ import java.util.Random;
 // Implémentation concrète de la Factory
 public class RandomColorFactory implements ColorFactory {
     private Color randomColor;
+
     public RandomColorFactory() {
         generateRandomColor();
     }
+
     private void generateRandomColor() {
         Random random = new Random();
         double red = random.nextDouble();
@@ -19,6 +21,6 @@ public class RandomColorFactory implements ColorFactory {
 
     @Override
     public Color generateColor() {
-        return randomColor;
+        return new Color(randomColor.getRed(), randomColor.getGreen(), randomColor.getBlue(), 1.0);
     }
 }

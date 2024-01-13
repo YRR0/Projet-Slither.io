@@ -9,7 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.paint.Color;import javafx.scene.paint.Color;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Color;
 
 public class MenuPane extends StackPane {
     private Stage primaryStage;
@@ -32,7 +33,7 @@ public class MenuPane extends StackPane {
 
     private void initializeMenu() {
 
-        //setStyle("-fx-background-color: #1c1c1c;");
+        // setStyle("-fx-background-color: #1c1c1c;");
         Image backgroundImage = new Image("/images/fond.jpg");
         ImageView backgroundView = new ImageView(backgroundImage);
 
@@ -41,7 +42,7 @@ public class MenuPane extends StackPane {
 
         // Ajouter la vue d'image en arrière-plan
         getChildren().add(backgroundView);
-        //setAlignment(Pos.CENTER);
+        // setAlignment(Pos.CENTER);
 
         Button simplePlayerButton = createMenuButton("Simple Player");
         Button twoPlayerButton = createMenuButton("Two Player");
@@ -77,8 +78,7 @@ public class MenuPane extends StackPane {
     private void handleButtonClick(String option) {
         if ("Simple Player".equals(option) && onStartGame != null) {
             onStartGame.run();
-        }
-        else if ("Two Player".equals(option) && onStartMultiPlayerGame != null) {
+        } else if ("Two Player".equals(option) && onStartMultiPlayerGame != null) {
             onStartMultiPlayerGame.run();
         }
     }

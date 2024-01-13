@@ -51,15 +51,13 @@ public class GamePane extends StackPane {
                     double adjustedX = (food.getX() + offsetX + WIDTH) % WIDTH;
                     double adjustedY = (food.getY() + offsetY + HEIGHT) % HEIGHT;
 
-                    if(food.getPower() == null) {
+                    if (food.getPower() == null) {
                         gc.setFill(food.getColor());
                         gc.fillOval(adjustedX, adjustedY, food.getSize(), food.getSize());
-                    }
-                    else{
-                        if(food.getPower() == Power.SHIELD){
+                    } else {
+                        if (food.getPower() == Power.SHIELD) {
                             gc.drawImage(powerImage, adjustedX, adjustedY, 30, 30);
-                        }
-                        else{
+                        } else {
                             gc.drawImage(weakImage, adjustedX, adjustedY, 30, 30);
                         }
 
@@ -82,17 +80,20 @@ public class GamePane extends StackPane {
 
                 if (body.hasPower()) {
                     gc.setFill(segment.getColor());
-                    if(body.getPower() == Power.SHIELD) {
-                        gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
-                    }
-                    else{
-                        double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor, adjustedX - SnakeSegment.SIZE * growthFactor};
-                        double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor, adjustedY + SnakeSegment.SIZE * growthFactor};
+                    if (body.getPower() == Power.SHIELD) {
+                        gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor,
+                                SnakeSegment.SIZE * growthFactor);
+                    } else {
+                        double[] xPoints = { adjustedX, adjustedX + SnakeSegment.SIZE * growthFactor,
+                                adjustedX - SnakeSegment.SIZE * growthFactor };
+                        double[] yPoints = { adjustedY, adjustedY + SnakeSegment.SIZE * growthFactor,
+                                adjustedY + SnakeSegment.SIZE * growthFactor };
                         gc.fillPolygon(xPoints, yPoints, 3);
                     }
                 } else {
                     gc.setFill(segmentColor);
-                    gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor, SnakeSegment.SIZE * growthFactor);
+                    gc.fillOval(adjustedX, adjustedY, SnakeSegment.SIZE * growthFactor,
+                            SnakeSegment.SIZE * growthFactor);
                 }
             }
 
@@ -108,12 +109,13 @@ public class GamePane extends StackPane {
                     Color segmentColorIA = getColorForSegment(i, numSegmentsIA);
                     if (ia.hasPower()) {
                         gc.setFill(segmentIA.getColor());
-                        if(ia.getPower() == Power.SHIELD){
-                            gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE , SnakeSegment.SIZE );
-                        }
-                        else{
-                            double[] xPoints = {adjustedX, adjustedX + SnakeSegment.SIZE , adjustedX - SnakeSegment.SIZE };
-                            double[] yPoints = {adjustedY, adjustedY + SnakeSegment.SIZE , adjustedY + SnakeSegment.SIZE };
+                        if (ia.getPower() == Power.SHIELD) {
+                            gc.fillRect(adjustedX, adjustedY, SnakeSegment.SIZE, SnakeSegment.SIZE);
+                        } else {
+                            double[] xPoints = { adjustedX, adjustedX + SnakeSegment.SIZE,
+                                    adjustedX - SnakeSegment.SIZE };
+                            double[] yPoints = { adjustedY, adjustedY + SnakeSegment.SIZE,
+                                    adjustedY + SnakeSegment.SIZE };
                             gc.fillPolygon(xPoints, yPoints, 3);
                         }
                     } else {
