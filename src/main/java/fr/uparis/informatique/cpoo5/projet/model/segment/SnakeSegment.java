@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 // La classe qui représente un segment du serpent dans le jeu
 public sealed abstract class SnakeSegment permits ShieldSegment, NormalSegment, WeakSegment{
     // La taille d'un segment du serpent
-    public static final double SIZE = 25;
+    public static final double SIZE = 20;
     private Color color;
     private double x; // La coordonnée x du segment du serpent
     private double y; // La coordonnée y du segment du serpent
