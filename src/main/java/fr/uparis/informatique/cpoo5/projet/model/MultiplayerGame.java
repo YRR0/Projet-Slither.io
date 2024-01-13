@@ -4,7 +4,7 @@ import fr.uparis.informatique.cpoo5.projet.model.segment.NormalSegment;
 import fr.uparis.informatique.cpoo5.projet.model.segment.SnakeSegment;
 import javafx.scene.paint.Color;
 
-public class MultiplayerGame extends Game {
+public final class MultiplayerGame extends Game{
     private boolean gameOver2;
     private SnakeBody snakePlayer2;
     private double directionXPlayer2 = -1;

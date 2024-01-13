@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.List;
 import javafx.scene.image.Image;
 
-public class GamePane extends StackPane {
+public final class GamePane extends StackPane {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 

@@ -3,7 +3,7 @@ package fr.uparis.informatique.cpoo5.projet.model.element;
 import javafx.scene.paint.Color;
 
 // La classe qui représente un aliment dans le jeu
-public class Food {
+public final class Food {
     // La taille d'un aliment
     private double size;
     private boolean snakeDead;

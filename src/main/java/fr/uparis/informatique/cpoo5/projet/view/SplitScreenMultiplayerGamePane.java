@@ -14,7 +14,7 @@ import javafx.scene.shape.Line;
 
 import java.util.List;
 
-public class SplitScreenMultiplayerGamePane extends HBox {
+public final class SplitScreenMultiplayerGamePane extends HBox {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth() / 2;
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private MultiplayerGame game;

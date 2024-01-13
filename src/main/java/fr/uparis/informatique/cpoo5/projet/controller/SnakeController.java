@@ -6,7 +6,8 @@ import fr.uparis.informatique.cpoo5.projet.view.GamePane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class SnakeController {
+
+public final class SnakeController {
     private Game game;
     private GamePane gamePane;
 
