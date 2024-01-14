@@ -9,8 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Color;
 
 public final class MenuPane extends StackPane {
     private Stage primaryStage;
@@ -66,7 +64,6 @@ public final class MenuPane extends StackPane {
 
     private Button createMenuButton(String text) {
         Button button = new Button(text);
-        Color originalColor = Color.web("#4CAF50");
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.2);
 
@@ -81,12 +78,5 @@ public final class MenuPane extends StackPane {
         } else if ("Two Player".equals(option) && onStartMultiPlayerGame != null) {
             onStartMultiPlayerGame.run();
         }
-    }
-
-    private String toRGBCode(Color color) {
-        return String.format("#%02X%02X%02X",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
     }
 }

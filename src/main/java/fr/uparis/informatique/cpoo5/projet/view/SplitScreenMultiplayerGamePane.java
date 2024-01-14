@@ -43,9 +43,18 @@ public final class SplitScreenMultiplayerGamePane extends HBox {
     }
 
     public void render() {
-
-        renderPlayerCanvas(canvasPlayer1, game.getSnake(), game.getSnakePlayer2());
-        renderPlayerCanvas(canvasPlayer2, game.getSnakePlayer2(), game.getSnake());
+        if (!(game.getgameOver() || game.getgameOver2())) {
+            renderPlayerCanvas(canvasPlayer1, game.getSnake(), game.getSnakePlayer2());
+            renderPlayerCanvas(canvasPlayer2, game.getSnakePlayer2(), game.getSnake());
+        } else {
+            if (game.getgameOver()) {
+                GraphicsContext gc1 = canvasPlayer1.getGraphicsContext2D();
+                drawGameOverScreen(gc1);
+            } else {
+                GraphicsContext gc2 = canvasPlayer2.getGraphicsContext2D();
+                drawGameOverScreen(gc2);
+            }
+        }
     }
 
     private void renderPlayerCanvas(Canvas canvas, SnakeBody snake, SnakeBody snake2) {
@@ -54,17 +63,19 @@ public final class SplitScreenMultiplayerGamePane extends HBox {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Calculer la différence pour centrer la vue
-        double offsetX = WIDTH / 2 - snake.getSnakeBody().get(0).getX();
-        double offsetY = HEIGHT / 2 - snake.getSnakeBody().get(0).getY();
+        if (!snake.getSnakeBody().isEmpty()) {
+            // Calculer la différence pour centrer la vue
+            double offsetX = WIDTH / 2 - snake.getSnakeBody().get(0).getX();
+            double offsetY = HEIGHT / 2 - snake.getSnakeBody().get(0).getY();
 
-        // Afficher les éléments décalés par la différence calculée
-        renderFood(gc, offsetX, offsetY, game.getFoodList());
-        renderSnake(gc, offsetX, offsetY, snake.getSnakeBody());
+            // Afficher les éléments décalés par la différence calculée
+            renderFood(gc, offsetX, offsetY, game.getFoodList());
+            renderSnake(gc, offsetX, offsetY, snake.getSnakeBody());
 
-        renderSnake(gc, offsetX, offsetY, snake2.getSnakeBody());
+            renderSnake(gc, offsetX, offsetY, snake2.getSnakeBody());
 
-        drawScore(gc, snake);
+            drawScore(gc, snake);
+        }
     }
 
     private void renderFood(GraphicsContext gc, double offsetX, double offsetY, List<Food> foodList) {
@@ -135,5 +146,18 @@ public final class SplitScreenMultiplayerGamePane extends HBox {
 
         int snakeSize = snake.getSnakeBody().size();
         gc.fillText("" + snakeSize, scoreX, scoreY);
+    }
+
+    private void drawGameOverScreen(GraphicsContext gc) {
+        // Afficher un message Game Over au centre de l'écran
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial", 40));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("Game Over", WIDTH / 2, HEIGHT / 2 - 40);
+
+        // Afficher le score
+        int snakeSize = game.getSnake().getSnakeBody().size();
+        gc.setFont(Font.font("Arial", 20));
+        gc.fillText("Taille du serpent : " + snakeSize, WIDTH / 2, HEIGHT / 2);
     }
 }

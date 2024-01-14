@@ -53,15 +53,12 @@ public final class MultiplayerController {
                 gamePane.drawPause();
                 game.togglePause();
                 break;
-            case R:
-                if (game.getgameOver()) {
-                    game.reset();
-                }
-                break;
             case SPACE:
                 // Mettre en pause ou reprendre le jeu lorsque la touche "P" est pressée
                 gamePane.drawPause();
                 game.togglePause();
+                break;
+            default:
                 break;
         }
     }

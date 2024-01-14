@@ -94,6 +94,8 @@ public final class SnakeController {
                 // Augmenter la vitesse lorsque la barre d'espace est pressée
                 game.increaseSpeed();
                 break;
+            default :
+                break;
         }
     }
 

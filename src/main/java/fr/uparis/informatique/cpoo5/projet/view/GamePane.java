@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.scene.text.TextAlignment;
-import java.awt.*;
 import java.util.List;
 import javafx.scene.image.Image;
 

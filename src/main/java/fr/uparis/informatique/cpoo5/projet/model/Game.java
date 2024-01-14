@@ -92,7 +92,7 @@ public sealed class Game permits MultiplayerGame {
                     + directionY * (speed ? gameConfig.getIncSpeed() : GameConfig.getSPEED());
 
             // Vérifier la collision avec le corps du serpent
-            if (checkSelfCollision(newX, newY)) {
+            if (checkSelfCollision(this.snake, newX, newY)) {
                 if (snake.hasPower()) {
                     if (snake.getPower() == Power.SHIELD) {
                         System.out.println("Self collision && shield");
@@ -158,7 +158,7 @@ public sealed class Game permits MultiplayerGame {
 
     // Pour ajouter des segments spéciaux si le serpent a mangé une nourriture
     // spéciale
-    public void addPowerToSnake(Power power, SnakeBody snake) {
+    private void addPowerToSnake(Power power, SnakeBody snake) {
         snake.setPower(power);
         int snakeSize = snake.getSnakeBody().size();
         for (int i = 0; i < snakeSize; ++i) {
@@ -173,7 +173,7 @@ public sealed class Game permits MultiplayerGame {
     }
 
     // Pour faire bouger le serpent en fonction des segments qui le composent
-    public void move(SnakeBody snake, double newX, double newY) {
+    private void move(SnakeBody snake, double newX, double newY) {
         SnakeSegment head = snake.getSnakeBody().get(0);
         if (head instanceof NormalSegment) {
             snake.getSnakeBody().remove(snake.getSnakeBody().size() - 1);
@@ -239,7 +239,7 @@ public sealed class Game permits MultiplayerGame {
                 normalizedHeadY + SnakeSegment.SIZE > normalizedFoodY;
     }
 
-    protected boolean checkSelfCollision(double newX, double newY) {
+    protected boolean checkSelfCollision(SnakeBody snake, double newX, double newY) {
         // Vérifier la collision avec le propre corps du serpent
         for (int i = 1; i < snake.getSnakeBody().size(); i++) {
             SnakeSegment segment = snake.getSnakeBody().get(i);
@@ -314,12 +314,13 @@ public sealed class Game permits MultiplayerGame {
         return false;
     }
 
-    private void immunity(SnakeBody snake) {
+    protected void immunity(SnakeBody snake) {
         snake.setImmunity(true);
         // Timer pour faire en sorte que le serpent ait une immunité de 2 secondes quand
         // en cas de pouvoir
         immunityTimer = new Timer();
         immunityTimer.schedule(new TimerTask() {
+
             @Override
             public void run() {
                 snake.setImmunity(false);
@@ -428,14 +429,18 @@ public sealed class Game permits MultiplayerGame {
 
     // Utilisation dans la méthode convertIAToFood
     private void convertIAToFood(SnakeBody ia) {
-        for (int i = 0; i < 5; ++i) {
-
-            double x = ia.getSnakeBody().get(i).getX();
-            double y = ia.getSnakeBody().get(i).getY();
-
+        if (ia.getSnakeBody().size() < 5) {
+            double x = ia.getSnakeBody().get(0).getX();
+            double y = ia.getSnakeBody().get(0).getY();
             RandomColorFactory f = new RandomColorFactory();
-
             foodList.add(new Food(x, y, f.generateColor()));
+        } else {
+            for (int i = 0; i < 5; ++i) {
+                double x = ia.getSnakeBody().get(i).getX();
+                double y = ia.getSnakeBody().get(i).getY();
+                RandomColorFactory f = new RandomColorFactory();
+                foodList.add(new Food(x, y, f.generateColor()));
+            }
         }
         // Retirer l'IA de la liste des IA, elle va réapparaître autre part
         snakeIA.remove(ia);
@@ -498,9 +503,6 @@ public sealed class Game permits MultiplayerGame {
         // On calcule les distances entre IA et le joueur
         double distanceToPlayerX = head.getX() - ia.getSnakeBody().get(0).getX();
         double distanceToPlayerY = head.getY() - ia.getSnakeBody().get(0).getY();
-
-        // Théorème de Pythagore pour avoir la distance
-        double sq1 = Math.pow(distanceToPlayerX, 2);
 
         // On prend en compte l'offset
         double offsetX = gameConfig.getWidth() / 2 - head.getX();

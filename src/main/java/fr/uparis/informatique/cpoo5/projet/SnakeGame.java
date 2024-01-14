@@ -19,6 +19,7 @@ public class SnakeGame extends Application {
     private static final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     private static final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
     private Stage primaryStage;
+    private AnimationTimer gameLoop;
 
     public static void main(String[] args) {
         System.out.println("Launching application...");
@@ -64,14 +65,10 @@ public class SnakeGame extends Application {
 
         gameStage.setScene(gameScene);
 
-        gameStage.setOnCloseRequest(event -> {
-            System.out.println("Fenêtre fermée");
-            game.stopImmunityTimer();
-        });
         primaryStage.close();
 
         // Démarrer la boucle de jeu
-        new AnimationTimer() {
+        gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (game.isPaused()) {
@@ -79,7 +76,14 @@ public class SnakeGame extends Application {
                     gameController.update();
                 }
             }
-        }.start();
+        };
+        gameLoop.start();
+
+        gameStage.setOnCloseRequest(event -> {
+            System.out.println("Fenêtre fermée");
+            game.stopImmunityTimer();
+            gameLoop.stop();
+        });
 
         // Afficher le nouveau stage pour le jeu
         gameStage.show();
@@ -100,7 +104,7 @@ public class SnakeGame extends Application {
         primaryStage.close();
 
         // Démarrer la boucle de jeu
-        new AnimationTimer() {
+        gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (game.isPaused()) {
@@ -108,7 +112,14 @@ public class SnakeGame extends Application {
                     gameController.update();
                 }
             }
-        }.start();
+        };
+        gameLoop.start();
+
+        gameStage.setOnCloseRequest(event -> {
+            System.out.println("Fenêtre fermée");
+            game.stopImmunityTimer();
+            gameLoop.stop();
+        });
 
         gameStage.show();
     }
